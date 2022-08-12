@@ -160,5 +160,16 @@ interface IManager is IManagerEvents {
 
   /// @notice Duration that must elapse before completing a withdrawal after initiating it.
   function withdrawDelay() view external returns (uint32);
-}
 
+  function VERSION() view external returns (uint256);
+  function initializeCount() view external returns (uint256);
+  function initializeV0(address _owner, address _pauser, Delays memory _delays, Fees memory _fees) external;
+  function proxiableUUID() view external returns (bytes32);
+  function updateDepositCap(address _asset, uint256 _newDepositCap) external;
+  function updateFees(Fees memory _fees) external;
+  function updateOwner(address _newOwner) external;
+  function updatePauser(address _newPauser) external;
+  function updateUserDelays(uint256 _minDepositDuration, uint256 _withdrawDelay, uint256 _purchaseDelay) external;
+  function upgradeTo(address newImplementation) external;
+  function upgradeToAndCall(address newImplementation, bytes memory data) payable external;
+}
