@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "src/interfaces/IManagerEvents.sol";
+import "src/interfaces/IGovernable.sol";
 
-interface IManager is IManagerEvents {
+interface IManager is IManagerEvents, IGovernable {
   /// @notice Max fee for deposit and purchase.
   function MAX_FEE() view external returns (uint256);
 
