@@ -328,4 +328,19 @@ interface ISet is ILFT, ISetEvents, ISetTypes {
   /// @notice Burns `_shares` from owner and queues exactly `_assets` amount of underlying tokens to be sent to
   /// `_receiver` after the `manager.withdrawDelay()` has elapsed.
   function withdraw(uint256 _assets, address _receiver, address _owner) external returns (uint256 _shares);
+
+  /// Additional functions from the ABI.
+  function DOMAIN_SEPARATOR() view external returns (bytes32);
+  function VERSION() view external returns (uint256);
+  function allowance(address, address) view external returns (uint256);
+  function approve(address spender, uint256 amount) external returns (bool);
+  function balanceOf(address) view external returns (uint256);
+  function decimals() view external returns (uint8);
+  function name() view external returns (string memory);
+  function nonces(address) view external returns (uint256);
+  function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
+  function symbol() view external returns (string memory);
+  function totalSupply() view external returns (uint256);
+  function transfer(address _to, uint256 _amount) external returns (bool);
+  function transferFrom(address _from, address _to, uint256 _amount) external returns (bool);
 }
