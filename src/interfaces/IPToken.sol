@@ -2,6 +2,11 @@ pragma solidity ^0.8.10;
 
 import "src/interfaces/ILFT.sol";
 
+/**
+ * @notice Users receive protection tokens when purchasing protection. Each protection token contract is associated
+ * with a single market, and protection tokens are minted to a user proportional to the amount of protection they
+ * purchase. When a market triggers, protection tokens can be redeemed to claim assets.
+ */
 interface IPToken is ILFT {
     /// @notice Version number of this implementation contract.
     function VERSION() view external returns (uint256);
