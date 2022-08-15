@@ -3,10 +3,81 @@ pragma solidity ^0.8.0;
 
 import "src/interfaces/IConfig.sol";
 import "src/interfaces/ILFT.sol";
-import "src/interfaces/ISetEvents.sol";
-import "src/interfaces/ISetTypes.sol";
 
-interface ISet is ILFT, ISetEvents, ISetTypes {
+interface ISet is ILFT {
+  /// @dev Emitted when a user cancels protection. This is a market-level event.
+  event Cancellation(
+    address caller,
+    address indexed receiver,
+    address indexed owner,
+    uint256 protection,
+    uint256 ptokens,
+    address indexed trigger,
+    uint256 refund
+  );
+
+  /// @dev Emitted when a user claims their protection payout when a market is
+  /// triggered. This is a market-level event
+  event Claim(
+    address caller,
+    address indexed receiver,
+    address indexed owner,
+    uint256 protection,
+    uint256 ptokens,
+    address indexed trigger
+  );
+
+  /// @dev Emitted when a user deposits assets or mints shares. This is a
+  /// set-level event.
+  event Deposit(
+    address indexed caller,
+    address indexed owner,
+    uint256 assets,
+    uint256 shares
+  );
+
+  /// @dev Emitted when a user purchases protection from a market. This is a
+  /// market-level event.
+  event Purchase(
+    address indexed caller,
+    address indexed owner,
+    uint256 protection,
+    uint256 ptokens,
+    address indexed trigger,
+    uint256 cost
+  );
+
+  /// @dev Emitted when a user withdraws assets or redeems shares. This is a
+  /// set-level event.
+  event Withdraw(
+    address caller,
+    address indexed receiver,
+    address indexed owner,
+    uint256 assets,
+    uint256 shares,
+    uint256 indexed withdrawalId
+  );
+
+  /// @dev Emitted when a user queues a withdrawal or redeem to be completed
+  /// later. This is a set-level event.
+  event WithdrawalPending(
+    address caller,
+    address indexed receiver,
+    address indexed owner,
+    uint256 assets,
+    uint256 shares,
+    uint256 indexed withdrawalId
+  );
+
+  struct PendingWithdrawal {
+    uint128 shares; // Shares burned to queue the withdrawal.
+    uint128 assets; // Amount of assets that will be paid out upon completion of the withdrawal.
+    address owner; // Owner of the shares.
+    uint64 queueTime; // Timestamp at which the withdrawal was requested.
+    address receiver; // Address the assets will be sent to.
+    uint64 delay; // Protocol withdrawal delay at the time of request.
+  }
+
   /// @notice Devalues all outstanding protection by applying unaccrued decay to the specified market.
   function accrueDecay(address _trigger) external;
 
