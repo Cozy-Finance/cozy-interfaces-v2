@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import "src/interfaces/ICState.sol";
+import "src/interfaces/ISet.sol";
+
 /**
  * @dev The minimal functions a trigger must implement to work with the Cozy protocol.
  */
-interface ITrigger is ITriggerEvents {
+interface ITrigger is ICState {
   /// @dev Emitted when a new set is added to the trigger's list of sets.
   event SetAdded(ISet set);
 

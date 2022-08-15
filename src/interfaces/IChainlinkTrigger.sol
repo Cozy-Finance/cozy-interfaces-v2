@@ -1,11 +1,14 @@
 pragma solidity ^0.8.10;
 
+import "src/interfaces/ICState.sol";
+import "src/interfaces/ISet.sol";
+
 /**
  * @notice A trigger contract that takes two addresses: a truth oracle and a tracking oracle.
  * This trigger ensures the two oracles always stay within the given price tolerance; the delta
  * in prices can be equal to but not greater than the price tolerance.
  */
-interface IChainlinkTrigger is IBaseTrigger {
+interface IChainlinkTrigger is ICState {
   /// @dev Emitted when a new set is added to the trigger's list of sets.
   event SetAdded(ISet set);
 
