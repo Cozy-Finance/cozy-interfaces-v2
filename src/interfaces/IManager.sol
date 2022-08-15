@@ -6,6 +6,10 @@ import "src/interfaces/ICState.sol";
 import "src/interfaces/IERC20.sol";
 import "src/interfaces/ISet.sol";
 
+/**
+ * @notice The Manager is in charge of the full Cozy protocol. Configuration parameters are defined here, it serves
+ * as the entry point for all privileged operations, and exposes the `createSet` method used to create new sets.
+ */
 interface IManager is ICState, IConfig {
   /// @dev Emitted when a new set is given permission to pull funds from the backstop if it has a shortfall after a trigger.
   event BackstopApprovalStatusUpdated(address indexed set, bool status);

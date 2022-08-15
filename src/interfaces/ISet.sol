@@ -4,6 +4,9 @@ pragma solidity ^0.8.0;
 import "src/interfaces/IConfig.sol";
 import "src/interfaces/ILFT.sol";
 
+/**
+ * @notice All protection markets live within a set.
+ */
 interface ISet is ILFT {
   /// @dev Emitted when a user cancels protection. This is a market-level event.
   event Cancellation(
