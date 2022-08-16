@@ -1,4 +1,5 @@
-pragma solidity ^0.8.10;
+// SPDX-License-Identifier: Unlicensed
+pragma solidity ^0.8.0;
 
 /**
  * @notice This is a utility contract to make it easy to deploy UMATriggers for

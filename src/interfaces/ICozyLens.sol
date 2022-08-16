@@ -1,4 +1,5 @@
-pragma solidity ^0.8.10;
+// SPDX-License-Identifier: Unlicensed
+pragma solidity ^0.8.0;
 
 import "src/interfaces/IDecayModel.sol";
 import "src/interfaces/IDripModel.sol";
