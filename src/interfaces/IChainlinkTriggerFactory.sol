@@ -1,12 +1,25 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import "chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "src/interfaces/IChainlinkTrigger.sol";
+
 /**
  * @notice Deploys Chainlink triggers that ensure two oracles stay within the given price
  * tolerance. It also supports creating a fixed price oracle to use as the truth oracle, useful
  * for e.g. ensuring stablecoins maintain their peg.
  */
 interface IChainlinkTriggerFactory {
+  struct TriggerMetadata {
+    // The name that should be used for markets that use the trigger.
+    string name;
+    // A human-readable description of the trigger.
+    string description;
+    // The URI of a logo image to represent the trigger.
+    string logoURI;
+  }
+
+
   /// @dev Emitted when the factory deploys a trigger.
   /// @param trigger Address at which the trigger was deployed.
   /// @param triggerConfigId Unique identifier of the trigger based on its configuration.
@@ -51,7 +64,14 @@ interface IChainlinkTriggerFactory {
   /// have for the truth oracle. See ChainlinkTrigger.truthFrequencyTolerance() for more information.
   /// @param _trackingFrequencyTolerance The frequency tolerance that the deployed trigger will
   /// have for the tracking oracle. See ChainlinkTrigger.trackingFrequencyTolerance() for more information.
-  function deployTrigger(address _truthOracle, address _trackingOracle, uint256 _priceTolerance, uint256 _truthFrequencyTolerance, uint256 _trackingFrequencyTolerance) external returns (address _trigger);
+  function deployTrigger(
+    AggregatorV3Interface _truthOracle,
+    AggregatorV3Interface _trackingOracle,
+    uint256 _priceTolerance,
+    uint256 _truthFrequencyTolerance,
+    uint256 _trackingFrequencyTolerance,
+    TriggerMetadata memory _metadata
+  ) external returns (IChainlinkTrigger _trigger);
 
   /// @notice Call this function to deploy a ChainlinkTrigger with a
   /// FixedPriceAggregator as its truthOracle. This is useful if you were
@@ -65,7 +85,14 @@ interface IChainlinkTriggerFactory {
   /// have. See ChainlinkTrigger.priceTolerance() for more information.
   /// @param _frequencyTolerance The frequency tolerance that the deployed trigger will
   /// have for the tracking oracle. See ChainlinkTrigger.trackingFrequencyTolerance() for more information.
-  function deployTrigger(int256 _price, uint8 _decimals, address _trackingOracle, uint256 _priceTolerance, uint256 _frequencyTolerance) external returns (address _trigger);
+  function deployTrigger(
+    int256 _price,
+    uint8 _decimals,
+    AggregatorV3Interface _trackingOracle,
+    uint256 _priceTolerance,
+    uint256 _frequencyTolerance,
+    TriggerMetadata memory _metadata
+  ) external returns (IChainlinkTrigger _trigger);
 
   /// @notice Call this function to determine the address at which a trigger
   /// with the supplied configuration would be deployed.
@@ -80,7 +107,14 @@ interface IChainlinkTriggerFactory {
   /// @param _triggerCount The zero-indexed ordinal of the trigger with respect to its
   /// configuration, e.g. if this were to be the fifth trigger deployed with
   /// these configs, then _triggerCount should be 4.
-  function computeTriggerAddress(address _truthOracle, address _trackingOracle, uint256 _priceTolerance, uint256 _truthFrequencyTolerance, uint256 _trackingFrequencyTolerance, uint256 _triggerCount) view external returns (address _address);
+  function computeTriggerAddress(
+    AggregatorV3Interface _truthOracle,
+    AggregatorV3Interface _trackingOracle,
+    uint256 _priceTolerance,
+    uint256 _truthFrequencyTolerance,
+    uint256 _trackingFrequencyTolerance,
+    uint256 _triggerCount
+  ) view external returns (address _address);
 
   /// @notice Call this function to find triggers with the specified
   /// configurations that can be used for new markets in Sets.
@@ -95,7 +129,13 @@ interface IChainlinkTriggerFactory {
   /// have for the truth oracle. See ChainlinkTrigger.truthFrequencyTolerance() for more information.
   /// @param _trackingFrequencyTolerance The frequency tolerance that the deployed trigger will
   /// have for the tracking oracle. See ChainlinkTrigger.trackingFrequencyTolerance() for more information.
-  function findAvailableTrigger(address _truthOracle, address _trackingOracle, uint256 _priceTolerance, uint256 _truthFrequencyTolerance, uint256 _trackingFrequencyTolerance) view external returns (address);
+  function findAvailableTrigger(
+    AggregatorV3Interface _truthOracle,
+    AggregatorV3Interface _trackingOracle,
+    uint256 _priceTolerance,
+    uint256 _truthFrequencyTolerance,
+    uint256 _trackingFrequencyTolerance
+  ) view external returns (address);
 
   /// @notice Call this function to determine the identifier of the supplied trigger
   /// configuration. This identifier is used both to track the number of
@@ -109,7 +149,13 @@ interface IChainlinkTriggerFactory {
   /// have for the truth oracle. See ChainlinkTrigger.truthFrequencyTolerance() for more information.
   /// @param _trackingFrequencyTolerance The frequency tolerance that the deployed trigger will
   /// have for the tracking oracle. See ChainlinkTrigger.trackingFrequencyTolerance() for more information.
-  function triggerConfigId(address _truthOracle, address _trackingOracle, uint256 _priceTolerance, uint256 _truthFrequencyTolerance, uint256 _trackingFrequencyTolerance) view external returns (bytes32);
+  function triggerConfigId(
+    AggregatorV3Interface _truthOracle,
+    AggregatorV3Interface _trackingOracle,
+    uint256 _priceTolerance,
+    uint256 _truthFrequencyTolerance,
+    uint256 _trackingFrequencyTolerance
+  ) view external returns (bytes32);
 
   /// @notice Call this function to deploy a FixedPriceAggregator contract,
   /// which behaves like a Chainlink oracle except that it always returns the
@@ -118,7 +164,7 @@ interface IChainlinkTriggerFactory {
   /// instead of reverting to avoid duplicate aggregators
   /// @param _price The fixed price, in the decimals indicated, returned by the deployed oracle.
   /// @param _decimals The number of decimals of the fixed price.
-  function deployFixedPriceAggregator(int256 _price, uint8 _decimals) external returns (address);
+  function deployFixedPriceAggregator(int256 _price, uint8 _decimals) external returns (AggregatorV3Interface);
 
   /// @notice Call this function to compute the address that a
   /// FixedPriceAggregator contract would be deployed to with the provided args.
