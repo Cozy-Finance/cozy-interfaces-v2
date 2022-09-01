@@ -368,9 +368,10 @@ interface ISet is ILFT {
   /// address to read the set's state.
   function state(address _who) view external returns (uint8 _state);
 
-  /// @notice Total amount of fees available to drip to suppliers. When protection is purchased, this gets
-  /// incremented by the protection cost (after fees). It gets decremented when fees are dripped to suppliers.
-  function supplierFeePool() view external returns (uint128);
+  /// @notice Returns the set's total amount of fees available to drip to suppliers, and each market's contribution to that total amount.
+  /// When protection is purchased, the supplier fee pools for the set and the market that protection is purchased from
+  /// gets incremented by the protection cost (after fees). They get decremented when fees are dripped to suppliers.
+  function supplierFeePool(address) view external returns (uint256);
 
   /// @notice Syncs the internal accounting balance with the true balance.
   function sync() external;
