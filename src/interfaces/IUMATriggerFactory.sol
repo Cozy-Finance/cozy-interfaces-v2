@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import "uma-protocol/packages/core/contracts/oracle/interfaces/FinderInterface.sol";
 import "src/interfaces/IUMATrigger.sol";
 
 /**
@@ -39,7 +40,7 @@ interface IUMATriggerFactory {
   function manager() view external returns (address);
 
   /// @notice The UMA contract used to lookup the UMA Optimistic Oracle.
-  function oracleFinder() view external returns (address);
+  function oracleFinder() view external returns (FinderInterface);
 
   /// @notice Maps the triggerConfigId to the number of triggers created with those configs.
   function triggerCount(bytes32) view external returns (uint256);
