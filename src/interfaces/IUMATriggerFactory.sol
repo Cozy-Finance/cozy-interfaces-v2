@@ -47,8 +47,10 @@ interface IUMATriggerFactory {
   /// Oracle for evaluation.
   /// @param _rewardToken The token used to pay the reward to users that propose
   /// answers to the query.
-  /// @param _rewardAmount The amount of rewardToken that will be paid to users
-  /// who propose an answer to the query.
+  /// @param _rewardAmount The amount of rewardToken that will be paid as a
+  /// reward to anyone who proposes an answer to the query.
+  /// @param _refundRecipient Default address that will recieve any leftover
+  /// rewards at UMA query settlement time.
   /// @param _bondAmount The amount of `rewardToken` that must be staked by a
   /// user wanting to propose or dispute an answer to the query. See UMA's price
   /// dispute workflow for more information. It's recommended that the bond
@@ -59,13 +61,20 @@ interface IUMATriggerFactory {
   /// more information. It's recommended that the dispute window be fairly long
   /// (12-24 hours), given the difficulty of assessing expected queries (e.g.
   /// "Was protocol ABCD hacked") and the amount of funds potentially at stake.
+  /// @param _name The name that should be used for markets that use the trigger.
+  /// @param _description A human-readable description of the trigger.
+  /// @param _logoURI The URI of a logo image to represent the trigger.
   function deployTrigger(
     string memory _query,
     address _rewardToken,
     uint256 _rewardAmount,
+    address _refundRecipient,
     uint256 _bondAmount,
-    uint256 _proposalDisputeWindow
-  ) external returns (address _trigger);
+    uint256 _proposalDisputeWindow,
+    string memory _name,
+    string memory _description,
+    string memory _logoURI
+  ) external returns(address _trigger);
 
   /// @notice Call this function to determine the address at which a trigger
   /// with the supplied configuration would be deployed. See `deployTrigger` for
@@ -74,10 +83,11 @@ interface IUMATriggerFactory {
     string memory _query,
     address _rewardToken,
     uint256 _rewardAmount,
+    address _refundRecipient,
     uint256 _bondAmount,
     uint256 _proposalDisputeWindow,
     uint256 _triggerCount
-  ) view external returns (address _address);
+  ) view external returns(address _address);
 
   /// @notice Call this function to find triggers with the specified
   /// configurations that can be used for new markets in Sets. See
@@ -86,18 +96,27 @@ interface IUMATriggerFactory {
     string memory _query,
     address _rewardToken,
     uint256 _rewardAmount,
+    address _refundRecipient,
     uint256 _bondAmount,
     uint256 _proposalDisputeWindow
-  ) view external returns (address);
+  ) view external returns(address);
 
   /// @notice Call this function to determine the identifier of the supplied
   /// trigger configuration. This identifier is used both to track the number of
   /// triggers deployed with this configuration (see `triggerCount`) and is
-  /// emitted at the time triggers with that configuration are deployed.
+  /// emitted as a part of the TriggerDeployed event when triggers are deployed.
+  /// @dev This function takes the rewardAmount as an input despite it not being
+  /// an argument of the UMATrigger constructor nor it being held in storage by
+  /// the trigger. This is done because the rewardAmount is something that
+  /// deployers could reasonably differ on. Deployer A might deploy a trigger
+  /// that is identical to what Deployer B wants in every way except the amount
+  /// of rewardToken that is being offered, and it would still be reasonable for
+  /// Deployer B to not want to re-use A's trigger for his own markets.
   function triggerConfigId(
     string memory _query,
     address _rewardToken,
     uint256 _rewardAmount,
+    address _refundRecipient,
     uint256 _bondAmount,
     uint256 _proposalDisputeWindow
   ) view external returns (bytes32);
