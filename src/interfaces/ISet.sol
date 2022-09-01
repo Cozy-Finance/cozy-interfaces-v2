@@ -186,13 +186,6 @@ interface ISet is ILFT {
   /// @notice Returns the array of metadata for all tokens minted to `_user`.
   function getMints(address _user) view external returns (MintMetadata[] memory);
 
-  /// @notice Replaces the constructor to initialize the Set contract.
-  function initialize(address _asset, uint256 _leverageFactor, uint256 _depositFee, address _decayModel, address _dripModel, IConfig.MarketInfo[] memory _marketInfos) external;
-
-  /// @dev Returns the number of times the contract has been initialized. This starts at zero, and is incremented with each
-  // upgrade's new initializer method.
-  function initializeCount() view external returns (uint256);
-
   /// @notice Returns true if `_who` is a valid market in the `_set`, false otherwise.
   function isMarket(address _who) view external returns (bool);
 

@@ -21,11 +21,6 @@ interface IPToken is ILFT {
     /// @notice The trigger this token is for. Markets in a set are uniquely identified by their trigger.
     function trigger() view external returns (address);
 
-    /// @notice Replaces the constructor to initialize the PToken contract.
-    /// @dev WARNING: DO NOT change this function signature or input to the `initializer` modifier. This method is
-    /// called by the `PTokenFactory` which requires this exact signature.
-    function initialize(uint8 _decimals, address _set, address _trigger) external;
-
     /// @notice Mints `_amount` of tokens to `_to`.
     function mint(address _to, uint256 _amount) external;
 
@@ -43,7 +38,6 @@ interface IPToken is ILFT {
     function approve(address spender, uint256 amount) external returns (bool);
     function balanceOf(address) view external returns (uint256);
     function decimals() view external returns (uint8);
-    function initializeCount() view external returns (uint256);
     function mints(address, uint256) view external returns (uint128 amount, uint64 time, uint64 delay);
     function name() view external returns (string memory);
     function nonces(address) view external returns (uint256);
