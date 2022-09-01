@@ -265,6 +265,4 @@ interface IManager is ICState, IConfig {
   function updateOwner(address _newOwner) external;
   function updatePauser(address _newPauser) external;
   function updateUserDelays(uint256 _minDepositDuration, uint256 _withdrawDelay, uint256 _purchaseDelay) external;
-  function upgradeTo(address newImplementation) external;
-  function upgradeToAndCall(address newImplementation, bytes memory data) payable external;
 }
