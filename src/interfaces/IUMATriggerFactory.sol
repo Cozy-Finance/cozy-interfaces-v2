@@ -11,8 +11,11 @@ pragma solidity ^0.8.0;
  */
 interface IUMATriggerFactory {
   /// @dev Emitted when the factory deploys a trigger.
-  /// The `trigger` is the address at which the trigger was deployed.
-  /// For `triggerConfigId`, see the function of the same name in this contract.
+  /// @param trigger The address at which the trigger was deployed.
+  /// @param triggerConfigId See the function of the same name in this contract.
+  /// @param name The name that should be used for markets that use the trigger.
+  /// @param description A human-readable description of the trigger.
+  /// @param logoURI The URI of a logo image to represent the trigger.
   /// For other attributes, see the docs for the params of `deployTrigger` in
   /// this contract.
   event TriggerDeployed(
@@ -22,8 +25,12 @@ interface IUMATriggerFactory {
     string query,
     address indexed rewardToken,
     uint256 rewardAmount,
+    address refundRecipient,
     uint256 bondAmount,
-    uint256 proposalDisputeWindow
+    uint256 proposalDisputeWindow,
+    string name,
+    string description,
+    string logoURI
   );
 
   /// @notice The manager of the Cozy protocol.

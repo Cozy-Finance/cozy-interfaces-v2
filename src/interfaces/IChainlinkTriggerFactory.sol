@@ -18,6 +18,11 @@ interface IChainlinkTriggerFactory {
   /// `ChainlinkTrigger.truthFrequencyTolerance()` for more information.
   /// @param trackingFrequencyTolerance The frequencyTolerance that the deployed trigger will have for the tracking oracle. See
   /// `ChainlinkTrigger.trackingFrequencyTolerance()` for more information.
+  /// @param name The name that should be used for markets that use the trigger.
+  /// @param description A human-readable description of the trigger.
+  /// @param logoURI The URI of a logo image to represent the trigger.
+  /// For other attributes, see the docs for the params of `deployTrigger` in
+  /// this contract.
   event TriggerDeployed(
     address trigger,
     bytes32 indexed triggerConfigId,
@@ -25,7 +30,10 @@ interface IChainlinkTriggerFactory {
     address indexed trackingOracle,
     uint256 priceTolerance,
     uint256 truthFrequencyTolerance,
-    uint256 trackingFrequencyTolerance
+    uint256 trackingFrequencyTolerance,
+    string name,
+    string description,
+    string logoURI
   );
 
   /// @notice The manager of the Cozy protocol.
