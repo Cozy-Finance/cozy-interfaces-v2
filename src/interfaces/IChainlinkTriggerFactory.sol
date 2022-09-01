@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "src/interfaces/IChainlinkTrigger.sol";
+import "src/interfaces/IManager.sol";
 
 /**
  * @notice Deploys Chainlink triggers that ensure two oracles stay within the given price
@@ -50,7 +51,7 @@ interface IChainlinkTriggerFactory {
   );
 
   /// @notice The manager of the Cozy protocol.
-  function manager() view external returns (address);
+  function manager() view external returns (IManager);
 
   /// @notice Maps the triggerConfigId to the number of triggers created with those configs.
   function triggerCount(bytes32) view external returns (uint256);
