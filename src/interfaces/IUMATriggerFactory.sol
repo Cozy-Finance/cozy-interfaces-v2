@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import "src/interfaces/IUMATrigger.sol";
+
 /**
  * @notice This is a utility contract to make it easy to deploy UMATriggers for
  * the Cozy protocol.
@@ -66,7 +68,7 @@ interface IUMATriggerFactory {
   /// @param _logoURI The URI of a logo image to represent the trigger.
   function deployTrigger(
     string memory _query,
-    address _rewardToken,
+    IERC20 _rewardToken,
     uint256 _rewardAmount,
     address _refundRecipient,
     uint256 _bondAmount,
@@ -74,14 +76,14 @@ interface IUMATriggerFactory {
     string memory _name,
     string memory _description,
     string memory _logoURI
-  ) external returns(address _trigger);
+  ) external returns(IUMATrigger _trigger);
 
   /// @notice Call this function to determine the address at which a trigger
   /// with the supplied configuration would be deployed. See `deployTrigger` for
   /// more information on parameters and their meaning.
   function computeTriggerAddress(
     string memory _query,
-    address _rewardToken,
+    IERC20 _rewardToken,
     uint256 _rewardAmount,
     address _refundRecipient,
     uint256 _bondAmount,
@@ -94,7 +96,7 @@ interface IUMATriggerFactory {
   /// `deployTrigger` for more information on parameters and their meaning.
   function findAvailableTrigger(
     string memory _query,
-    address _rewardToken,
+    IERC20 _rewardToken,
     uint256 _rewardAmount,
     address _refundRecipient,
     uint256 _bondAmount,
@@ -114,7 +116,7 @@ interface IUMATriggerFactory {
   /// Deployer B to not want to re-use A's trigger for his own markets.
   function triggerConfigId(
     string memory _query,
-    address _rewardToken,
+    IERC20 _rewardToken,
     uint256 _rewardAmount,
     address _refundRecipient,
     uint256 _bondAmount,
