@@ -18,5 +18,8 @@ interface ITrigger is ICState {
   function state() external returns(CState);
 
   /// @notice Called by the Manager to add a newly created set to the trigger's list of sets.
-  function addSet(ISet set) external;
+  function addSet(ISet set) external returns (bool);
+
+  /// @notice Returns true if the trigger has been acknowledged by the entity responsible for transitioning trigger state.
+  function acknowledged() external returns (bool);
 }

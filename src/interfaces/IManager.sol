@@ -17,23 +17,23 @@ interface IManager is ICState, IConfig {
   /// @dev Emitted when the Cozy configuration delays are updated, and when a set is created.
   event ConfigParamsUpdated(uint256 configUpdateDelay, uint256 configUpdateGracePeriod);
 
-  /// @dev Emitted when a Set admin's queued set and market configuration updates are applied, and when a set is created.
+  /// @dev Emitted when a Set owner's queued set and market configuration updates are applied, and when a set is created.
   event ConfigUpdatesFinalized(address indexed set, SetConfig setConfig, MarketInfo[] marketInfos);
 
-  /// @dev Emitted when a Set admin queues new set and/or market configurations.
+  /// @dev Emitted when a Set owner queues new set and/or market configurations.
   event ConfigUpdatesQueued(address indexed set, SetConfig setConfig, MarketInfo[] marketInfos, uint256 updateTime, uint256 updateDeadline);
 
-  /// @dev Emitted when accrued Cozy reserve fees and backstop fees are swept from a Set to the Cozy admin (for reserves) and backstop.
+  /// @dev Emitted when accrued Cozy reserve fees and backstop fees are swept from a Set to the Cozy owner (for reserves) and backstop.
   event CozyFeesClaimed(address indexed set);
 
-  /// @dev Emitted when the delays affecting user actions are initialized or updated by the Cozy admin.
+  /// @dev Emitted when the delays affecting user actions are initialized or updated by the Cozy owner.
   event DelaysUpdated(uint256 minDepositDuration, uint256 withdrawDelay, uint256 purchaseDelay);
 
-  /// @dev Emitted when the deposit cap for an asset is updated by the Cozy admin.
+  /// @dev Emitted when the deposit cap for an asset is updated by the Cozy owner.
   event DepositCapUpdated(IERC20 indexed asset, uint256 depositCap);
 
-  /// @dev Emitted when the Cozy protocol fees are updated by the Cozy admin.
-  /// Changes to fees for the Set admin are emitted in ConfigUpdatesQueued and ConfigUpdatesFinalized.
+  /// @dev Emitted when the Cozy protocol fees are updated by the Cozy owner.
+  /// Changes to fees for the Set owner are emitted in ConfigUpdatesQueued and ConfigUpdatesFinalized.
   event FeesUpdated(Fees fees);
 
   /// @dev Emitted when a market, defined by it's trigger address, changes state.
@@ -45,10 +45,10 @@ interface IManager is ICState, IConfig {
   /// @dev Emitted when the pauser address is updated.
   event PauserUpdated(address indexed newPauser);
 
-  /// @dev Emitted when the admin of a set is updated.
-  event SetAdminUpdated(address indexed set, address indexed admin);
+  /// @dev Emitted when the owner of a set is updated.
+  event SetOwnerUpdated(address indexed set, address indexed owner);
 
-  /// @dev Emitted when the Set admin claims their portion of fees.
+  /// @dev Emitted when the Set owner claims their portion of fees.
   event SetFeesClaimed(address indexed set, address _receiver);
 
   /// @dev Emitted when the Set's pauser is updated.
@@ -63,16 +63,16 @@ interface IManager is ICState, IConfig {
     bool status;
   }
 
-  /// @notice All delays that can be set by the Cozy admin.
+  /// @notice All delays that can be set by the Cozy owner.
   struct Delays {
     uint256 configUpdateDelay; // Duration between when a set/market configuration updates are queued and when they can be executed.
-    uint256 configUpdateGracePeriod; // Defines how long the admin has to execute a configuration change, once it can be executed.
+    uint256 configUpdateGracePeriod; // Defines how long the owner has to execute a configuration change, once it can be executed.
     uint256 minDepositDuration; // The minimum duration before a withdrawal can be initiated after a deposit.
     uint256 withdrawDelay; // If not paused, suppliers must queue a withdrawal and wait this long before completing the withdrawal.
     uint256 purchaseDelay; // Protection does not mature (i.e. it cannot claim funds from a trigger) until this delay elapses after purchase.
   }
 
-  /// @notice All fees that can be set by the Cozy admin.
+  /// @notice All fees that can be set by the Cozy owner.
   struct Fees {
     uint16 depositFeeReserves;  // Fee charged on deposit and min, allocated to the protocol reserves, denoted in zoc.
     uint16 depositFeeBackstop; // Fee charged on deposit and min, allocated to the protocol backstop, denoted in zoc.
@@ -260,14 +260,9 @@ interface IManager is ICState, IConfig {
   function withdrawDelay() view external returns (uint32);
 
   function VERSION() view external returns (uint256);
-  function initializeCount() view external returns (uint256);
-  function initializeV0(address _owner, address _pauser, Delays memory _delays, Fees memory _fees) external;
-  function proxiableUUID() view external returns (bytes32);
   function updateDepositCap(address _asset, uint256 _newDepositCap) external;
   function updateFees(Fees memory _fees) external;
   function updateOwner(address _newOwner) external;
   function updatePauser(address _newPauser) external;
   function updateUserDelays(uint256 _minDepositDuration, uint256 _withdrawDelay, uint256 _purchaseDelay) external;
-  function upgradeTo(address newImplementation) external;
-  function upgradeToAndCall(address newImplementation, bytes memory data) payable external;
 }

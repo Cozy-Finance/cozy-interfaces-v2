@@ -146,4 +146,8 @@ interface IUMATrigger is ICState {
 
   /// @notice The maximum amount of sets that can be added to this trigger.
   function MAX_SET_LENGTH() view external returns (uint256);
+
+  /// @notice Returns true if the trigger has been acknowledged by the entity responsible for transitioning trigger state.
+  /// @notice UMA triggers are managed by the UMA decentralized voting system, so this always returns true.
+  function acknowledged() external pure returns (bool);
 }

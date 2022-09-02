@@ -186,13 +186,6 @@ interface ISet is ILFT {
   /// @notice Returns the array of metadata for all tokens minted to `_user`.
   function getMints(address _user) view external returns (MintMetadata[] memory);
 
-  /// @notice Replaces the constructor to initialize the Set contract.
-  function initialize(address _asset, uint256 _leverageFactor, uint256 _depositFee, address _decayModel, address _dripModel, IConfig.MarketInfo[] memory _marketInfos) external;
-
-  /// @dev Returns the number of times the contract has been initialized. This starts at zero, and is incremented with each
-  // upgrade's new initializer method.
-  function initializeCount() view external returns (uint256);
-
   /// @notice Returns true if `_who` is a valid market in the `_set`, false otherwise.
   function isMarket(address _who) view external returns (bool);
 
@@ -368,9 +361,10 @@ interface ISet is ILFT {
   /// address to read the set's state.
   function state(address _who) view external returns (uint8 _state);
 
-  /// @notice Total amount of fees available to drip to suppliers. When protection is purchased, this gets
-  /// incremented by the protection cost (after fees). It gets decremented when fees are dripped to suppliers.
-  function supplierFeePool() view external returns (uint128);
+  /// @notice Returns the set's total amount of fees available to drip to suppliers, and each market's contribution to that total amount.
+  /// When protection is purchased, the supplier fee pools for the set and the market that protection is purchased from
+  /// gets incremented by the protection cost (after fees). They get decremented when fees are dripped to suppliers.
+  function supplierFeePool(address) view external returns (uint256);
 
   /// @notice Syncs the internal accounting balance with the true balance.
   function sync() external;
