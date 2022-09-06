@@ -37,7 +37,7 @@ interface IChainlinkTrigger is ICState {
   /// @notice Returns the number of Sets that use this trigger in a market.
   function getSetsLength() view external returns (uint256);
 
-  /// @notice Returns the address of the trigger's manager.
+  /// @notice Returns the trigger's manager contract.
   function manager() view external returns (IManager);
 
   /// @notice The maximum amount of sets that can be added to this trigger.
