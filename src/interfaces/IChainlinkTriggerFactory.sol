@@ -20,7 +20,6 @@ interface IChainlinkTriggerFactory {
     string logoURI;
   }
 
-
   /// @dev Emitted when the factory deploys a trigger.
   /// @param trigger Address at which the trigger was deployed.
   /// @param triggerConfigId Unique identifier of the trigger based on its configuration.
@@ -51,10 +50,10 @@ interface IChainlinkTriggerFactory {
   );
 
   /// @notice The manager of the Cozy protocol.
-  function manager() view external returns (IManager);
+  function manager() external view returns (IManager);
 
   /// @notice Maps the triggerConfigId to the number of triggers created with those configs.
-  function triggerCount(bytes32) view external returns (uint256);
+  function triggerCount(bytes32) external view returns (uint256);
 
   /// @notice Call this function to deploy a ChainlinkTrigger.
   /// @param _truthOracle The address of the desired truthOracle for the trigger.
@@ -115,7 +114,7 @@ interface IChainlinkTriggerFactory {
     uint256 _truthFrequencyTolerance,
     uint256 _trackingFrequencyTolerance,
     uint256 _triggerCount
-  ) view external returns (address _address);
+  ) external view returns (address _address);
 
   /// @notice Call this function to find triggers with the specified
   /// configurations that can be used for new markets in Sets.
@@ -136,7 +135,7 @@ interface IChainlinkTriggerFactory {
     uint256 _priceTolerance,
     uint256 _truthFrequencyTolerance,
     uint256 _trackingFrequencyTolerance
-  ) view external returns (address);
+  ) external view returns (address);
 
   /// @notice Call this function to determine the identifier of the supplied trigger
   /// configuration. This identifier is used both to track the number of
@@ -156,7 +155,7 @@ interface IChainlinkTriggerFactory {
     uint256 _priceTolerance,
     uint256 _truthFrequencyTolerance,
     uint256 _trackingFrequencyTolerance
-  ) view external returns (bytes32);
+  ) external view returns (bytes32);
 
   /// @notice Call this function to deploy a FixedPriceAggregator contract,
   /// which behaves like a Chainlink oracle except that it always returns the
@@ -171,5 +170,5 @@ interface IChainlinkTriggerFactory {
   /// FixedPriceAggregator contract would be deployed to with the provided args.
   /// @param _price The fixed price, in the decimals indicated, returned by the deployed oracle.
   /// @param _decimals The number of decimals of the fixed price.
-  function computeFixedPriceAggregatorAddress(int256 _price, uint8 _decimals) view external returns (address);
+  function computeFixedPriceAggregatorAddress(int256 _price, uint8 _decimals) external view returns (address);
 }

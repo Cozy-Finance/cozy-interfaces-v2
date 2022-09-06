@@ -2,3 +2,9 @@
 remappings = [
   "chainlink/=lib/chainlink/"
 ]
+
+[profile.default.fmt]
+line_width = 100
+tab_width = 2
+func_attrs_with_params_multiline = false
+number_underscore = "thousands"

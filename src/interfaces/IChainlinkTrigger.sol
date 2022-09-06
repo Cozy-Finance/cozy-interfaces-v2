@@ -17,44 +17,44 @@ interface IChainlinkTrigger is ICState {
   event TriggerStateUpdated(CState indexed state);
 
   /// @notice The canonical oracle, assumed to be correct.
-  function truthOracle() view external returns (address);
+  function truthOracle() external view returns (address);
 
   /// @notice The oracle we expect to diverge.
-  function trackingOracle() view external returns (address);
+  function trackingOracle() external view returns (address);
 
   /// @notice The current trigger state. This should never return PAUSED.
-  function state() external returns(CState);
+  function state() external returns (CState);
 
   /// @notice Called by the Manager to add a newly created set to the trigger's list of sets.
   function addSet(ISet set) external;
 
   /// @notice Returns the set address at the specified index in the trigger's list of sets.
-  function sets(uint256) view external returns (address);
+  function sets(uint256) external view returns (address);
 
   /// @notice Returns all sets in the trigger's list of sets.
-  function getSets() view external returns (address[] memory);
+  function getSets() external view returns (address[] memory);
 
   /// @notice Returns the number of Sets that use this trigger in a market.
-  function getSetsLength() view external returns (uint256);
+  function getSetsLength() external view returns (uint256);
 
   /// @notice Returns the address of the trigger's manager.
-  function manager() view external returns (address);
+  function manager() external view returns (address);
 
   /// @notice The maximum amount of sets that can be added to this trigger.
-  function MAX_SET_LENGTH() view external returns (uint256);
+  function MAX_SET_LENGTH() external view returns (uint256);
 
   /// @notice The maximum percent delta between oracle prices that is allowed, expressed as a zoc.
   /// For example, a 0.2e4 priceTolerance would mean the trackingOracle price is
   /// allowed to deviate from the truthOracle price by up to +/- 20%, but no more.
   /// Note that if the truthOracle returns a price of 0, we treat the priceTolerance
   /// as having been exceeded, no matter what price the trackingOracle returns.
-  function priceTolerance() view external returns (uint256);
+  function priceTolerance() external view returns (uint256);
 
   /// @notice The maximum amount of time we allow to elapse before the truth oracle's price is deemed stale.
-  function truthFrequencyTolerance() view external returns (uint256);
+  function truthFrequencyTolerance() external view returns (uint256);
 
   /// @notice The maximum amount of time we allow to elapse before the tracking oracle's price is deemed stale.
-  function trackingFrequencyTolerance() view external returns (uint256);
+  function trackingFrequencyTolerance() external view returns (uint256);
 
   /// @notice Compares the oracle's price to the reference oracle and toggles the trigger if required.
   /// @dev This method executes the `programmaticCheck()` and makes the
