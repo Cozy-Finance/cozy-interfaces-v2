@@ -88,16 +88,4 @@ interface ICozyLens {
 
   /// @notice Returns an array of all trigger addresses in the `_set`.
   function allTriggers(ISet _set) view external returns (address[] memory _triggers);
-
-  // -------------------------------------
-  // -------- Address Computation --------
-  // -------------------------------------
-
-  /// @notice Given the `_salt`, `_asset`, `_setConfig`, and `_marketInfos` that will be used to create a set,
-  /// compute and return the address that set will be deployed to.
-  /// @dev The `_salt` is the user-provided salt, not the final salt after hashing with the chain ID.
-  function computeSetAddress(bytes32 _salt, address _asset, IConfig.SetConfig memory _setConfig, IConfig.MarketInfo[] memory _marketInfos) view external returns (address);
-
-  /// @notice Given a `_set` and its `_trigger` address, compute and return the address of its PToken.
-  function computePTokenAddress(ISet _set, address _trigger) view external returns (address);
 }
