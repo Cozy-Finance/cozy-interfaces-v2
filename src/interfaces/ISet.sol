@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "src/interfaces/IConfig.sol";
+import "src/interfaces/ICState.sol";
 import "src/interfaces/ILFT.sol";
 
 /**
@@ -359,7 +360,7 @@ interface ISet is ILFT {
 
   /// @notice Returns the state of the market or set. Pass a market address to read that market's state, or the set's
   /// address to read the set's state.
-  function state(address _who) view external returns (uint8 _state);
+  function state(address _who) view external returns (ICState.CState _state);
 
   /// @notice Returns the set's total amount of fees available to drip to suppliers, and each market's contribution to that total amount.
   /// When protection is purchased, the supplier fee pools for the set and the market that protection is purchased from
@@ -376,16 +377,16 @@ interface ISet is ILFT {
   function triggers(uint256) view external returns (address);
 
   /// @notice Unpauses the set and transitions to the provided `_state`.
-  function unpause(uint8 _state) external;
+  function unpause(ICState.CState _state) external;
 
   /// @notice Execute queued updates to setConfig and marketConfig. This should only be called by the Manager.
-  function updateConfigs(uint256 _leverageFactor, uint256 _depositFee, address _decayModel, address _dripModel, IConfig.MarketInfo[] memory _marketInfos) external;
+  function updateConfigs(uint256 _leverageFactor, uint256 _depositFee, address _decayModel, address _dripModel, MarketInfo[] memory _marketInfos) external;
 
   /// @notice Updates the state of the a market in the set.
   function updateMarketState(address _trigger, uint8 _newState) external;
 
   /// @notice Updates the set's state to `_state.
-  function updateSetState(uint8 _state) external;
+  function updateSetState(ICState.CState _state) external;
 
   /// @notice Returns the current utilization ratio of the specified market, as a wad.
   function utilization(address _trigger) view external returns (uint256);

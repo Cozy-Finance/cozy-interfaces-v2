@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import "src/interfaces/ISet.sol";
+
 interface ICozyMetadataRegistry {
 
   /// @notice Required metadata for a given set or trigger.
@@ -11,7 +13,7 @@ interface ICozyMetadataRegistry {
   }
 
   /// @dev Emitted when a set's metadata is updated.
-  event SetMetadataUpdated(address indexed set, Metadata metadata);
+  event SetMetadataUpdated(ISet indexed set, Metadata metadata);
 
   /// @dev Emitted when a trigger's metadata is updated.
   event TriggerMetadataUpdated(address indexed trigger, Metadata metadata);
@@ -22,12 +24,12 @@ interface ICozyMetadataRegistry {
   /// @notice Update metadata for sets.
   /// @param sets An array of sets to be updated.
   /// @param metadata An array of new metadata, mapping 1:1 with the addresses in the _sets array.
-  function updateSetMetadata(address[] memory sets, Metadata[] memory metadata) external;
+  function updateSetMetadata(ISet[] memory sets, Metadata[] memory metadata) external;
 
   /// @notice Update metadata for a set.
   /// @param set The address of the set.
   /// @param metadata The new metadata for the set.
-  function updateSetMetadata(address set, Metadata memory metadata) external;
+  function updateSetMetadata(ISet set, Metadata memory metadata) external;
 
 
   /// @notice Update metadata for a trigger.
