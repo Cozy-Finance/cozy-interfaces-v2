@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import "src/interfaces/IPToken.sol";
 import "src/interfaces/ISet.sol";
 
 /**
@@ -43,13 +44,13 @@ interface ICozyLens {
   // -----------------------------
 
   /// @notice Returns the state of the market, identified by its `_set` and `_trigger` address.
-  function getMarketState(ISet _set, address _trigger) view external returns (uint8 _state);
+  function getMarketState(ISet _set, address _trigger) view external returns (ICState.CState _state);
 
   /// @notice Returns the state of the `_set`.
-  function getSetState(ISet _set) view external returns (uint8 _state);
+  function getSetState(ISet _set) view external returns (ICState.CState _state);
 
   /// @notice Returns the PToken address of the market, identified by its `_set` and `_trigger` address.
-  function getPToken(ISet _set, address _trigger) view external returns (address _ptoken);
+  function getPToken(ISet _set, address _trigger) view external returns (IPToken _ptoken);
 
   /// @notice Returns the amount of active protection remaining in the market, identified by its `_set` and `_trigger`
   /// address, denominated in units of the set's `asset`.
@@ -68,7 +69,7 @@ interface ICozyLens {
   function getMarketWeight(ISet _set, address _trigger) view external returns (uint256 _weight);
 
   /// @notice Returns the address of the market's cost model, identified by its `_set` and `_trigger` address.
-  function getMarketCostModel(ISet _set, address _trigger) view external returns (address _costModel);
+  function getMarketCostModel(ISet _set, address _trigger) view external returns (ICostModel _costModel);
 
   /// @notice Returns the cost, excluding fees, to purchase `_protection` amount of protection in the market,
   /// identified by its `_set` and `_trigger` address. The cost is in units of the set's `asset`.
