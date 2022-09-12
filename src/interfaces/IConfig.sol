@@ -22,7 +22,7 @@ interface IConfig {
   /// @notice Market-level configuration.
   struct MarketInfo {
     address trigger; // Address of the trigger contract for this market.
-    address costModel; // Contract defining the cost model for this market.
+    ICostModel costModel; // Contract defining the cost model for this market.
     uint16 weight; // Weight of this market. Sum of weights across all markets must sum to 100% (1e4, 1 zoc).
     uint16 purchaseFee; // Fee applied on each purchase.
   }
