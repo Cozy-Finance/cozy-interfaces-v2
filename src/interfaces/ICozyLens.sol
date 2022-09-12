@@ -81,10 +81,10 @@ interface ICozyLens {
   function remainingWithdrawalDelay(ISet _set, uint256 _withdrawalId) view external returns (uint256 _delay);
 
   /// @notice Returns the `SetConfig` for the `_set`.
-  function getSetConfig(ISet _set) view external returns (IConfig.SetConfig memory);
+  function getSetConfig(ISet _set) view external returns (SetConfig memory);
 
   /// @notice Returns the `MarketInfo` for the market, identified by its `_set` and `_trigger` address.
-  function getMarketInfo(ISet _set, address _trigger) view external returns (IConfig.MarketInfo memory);
+  function getMarketInfo(ISet _set, address _trigger) view external returns (MarketInfo memory);
 
   /// @notice Returns an array of all trigger addresses in the `_set`.
   function allTriggers(ISet _set) view external returns (address[] memory _triggers);

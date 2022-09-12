@@ -380,7 +380,7 @@ interface ISet is ILFT {
   function unpause(ICState.CState _state) external;
 
   /// @notice Execute queued updates to setConfig and marketConfig. This should only be called by the Manager.
-  function updateConfigs(uint256 _leverageFactor, uint256 _depositFee, address _decayModel, address _dripModel, IConfig.MarketInfo[] memory _marketInfos) external;
+  function updateConfigs(uint256 _leverageFactor, uint256 _depositFee, address _decayModel, address _dripModel, MarketInfo[] memory _marketInfos) external;
 
   /// @notice Updates the state of the a market in the set.
   function updateMarketState(address _trigger, uint8 _newState) external;
