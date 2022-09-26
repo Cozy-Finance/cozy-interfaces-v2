@@ -2,3 +2,10 @@
 remappings = [
   "chainlink/=lib/chainlink/"
 ]
+
+[profile.default.fmt]
+line_width = 100
+tab_width = 2
+multiline_func_header = "params_first"
+single_line_statement_blocks = "preserve"
+number_underscore = "thousands"

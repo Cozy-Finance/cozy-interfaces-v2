@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "src/interfaces/ISet.sol";
 
 interface ICozyMetadataRegistry {
-
   /// @notice Required metadata for a given set or trigger.
   struct Metadata {
     string name; // Name of the set or trigger.
@@ -19,7 +18,7 @@ interface ICozyMetadataRegistry {
   event TriggerMetadataUpdated(address indexed trigger, Metadata metadata);
 
   /// @notice Address of the Cozy protocol manager.
-  function manager() view external returns (address);
+  function manager() external view returns (address);
 
   /// @notice Update metadata for sets.
   /// @param sets An array of sets to be updated.
@@ -30,7 +29,6 @@ interface ICozyMetadataRegistry {
   /// @param set The address of the set.
   /// @param metadata The new metadata for the set.
   function updateSetMetadata(ISet set, Metadata memory metadata) external;
-
 
   /// @notice Update metadata for a trigger.
   /// @param trigger The address of the trigger.

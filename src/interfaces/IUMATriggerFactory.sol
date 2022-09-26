@@ -37,13 +37,13 @@ interface IUMATriggerFactory {
   );
 
   /// @notice The manager of the Cozy protocol.
-  function manager() view external returns (address);
+  function manager() external view returns (address);
 
   /// @notice The UMA contract used to lookup the UMA Optimistic Oracle.
-  function oracleFinder() view external returns (FinderInterface);
+  function oracleFinder() external view returns (FinderInterface);
 
   /// @notice Maps the triggerConfigId to the number of triggers created with those configs.
-  function triggerCount(bytes32) view external returns (uint256);
+  function triggerCount(bytes32) external view returns (uint256);
 
   /// @notice Call this function to deploy a UMATrigger.
   /// @param _query The query that the trigger will send to the UMA Optimistic
@@ -77,7 +77,7 @@ interface IUMATriggerFactory {
     string memory _name,
     string memory _description,
     string memory _logoURI
-  ) external returns(IUMATrigger _trigger);
+  ) external returns (IUMATrigger _trigger);
 
   /// @notice Call this function to determine the address at which a trigger
   /// with the supplied configuration would be deployed. See `deployTrigger` for
@@ -90,7 +90,7 @@ interface IUMATriggerFactory {
     uint256 _bondAmount,
     uint256 _proposalDisputeWindow,
     uint256 _triggerCount
-  ) view external returns(address _address);
+  ) external view returns (address _address);
 
   /// @notice Call this function to find triggers with the specified
   /// configurations that can be used for new markets in Sets. See
@@ -102,7 +102,7 @@ interface IUMATriggerFactory {
     address _refundRecipient,
     uint256 _bondAmount,
     uint256 _proposalDisputeWindow
-  ) view external returns(address);
+  ) external view returns (address);
 
   /// @notice Call this function to determine the identifier of the supplied
   /// trigger configuration. This identifier is used both to track the number of
@@ -122,5 +122,5 @@ interface IUMATriggerFactory {
     address _refundRecipient,
     uint256 _bondAmount,
     uint256 _proposalDisputeWindow
-  ) view external returns (bytes32);
+  ) external view returns (bytes32);
 }
