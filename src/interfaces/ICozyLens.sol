@@ -89,10 +89,11 @@ interface ICozyLens {
 
   /// @notice Returns the cost, excluding fees, to purchase `_protection` amount of protection in the market,
   /// identified by its `_set` and `_trigger` address. The cost is in units of the set's `asset`.
-  function getPreviewPurchaseDataCost(address _set, address _trigger, uint256 _protection)
-    external
-    view
-    returns (uint256 _cost);
+  function getPreviewPurchaseDataCost(
+    address _set,
+    address _trigger,
+    uint256 _protection
+  ) external view returns (uint256 _cost);
 
   /// @notice Returns the time remaining until the pending withdrawal with ID `_withdrawalId` in `_set` can be
   /// completed. The returned time is only equal to the amount of elapsed wall-clock time when the set is active, since

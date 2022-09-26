@@ -105,15 +105,21 @@ interface ISet is ILFT {
   function balanceOfMatured(address _user) external view returns (uint256 _balance);
 
   /// @notice Cancel `_protection` amount of protection for the specified market, and send the refund amount to `_receiver`.
-  function cancel(address _trigger, uint256 _protection, address _receiver, address _owner)
-    external
-    returns (uint256 _refund, uint256 _ptokens);
+  function cancel(
+    address _trigger,
+    uint256 _protection,
+    address _receiver,
+    address _owner
+  ) external returns (uint256 _refund, uint256 _ptokens);
 
   /// @notice Claims protection payout after the market for `_trigger` is triggered. Pays out the specified amount of
   /// `_protection` held by `_owner` by sending it to `_receiver`.
-  function claim(address _trigger, uint256 _protection, address _receiver, address _owner)
-    external
-    returns (uint256 _ptokens);
+  function claim(
+    address _trigger,
+    uint256 _protection,
+    address _receiver,
+    address _owner
+  ) external returns (uint256 _ptokens);
 
   /// @notice Transfers accrued reserve and backstop fees to the `_owner` address and `_backstop` address, respectively.
   function claimCozyFees(address _owner, address _backstop) external;
@@ -260,9 +266,12 @@ interface ISet is ILFT {
 
   /// @notice Claims protection payout after the market for `_trigger` is triggered. Burns the specified number of
   /// `ptokens` held by `_owner` and sends the payout to `_receiver`.
-  function payout(address _trigger, uint256 _ptokens, address _receiver, address _owner)
-    external
-    returns (uint256 _protection);
+  function payout(
+    address _trigger,
+    uint256 _ptokens,
+    address _receiver,
+    address _owner
+  ) external returns (uint256 _protection);
 
   /// @notice Returns the total number of withdrawals that have been queued, including pending withdrawals that have been completed.
   function pendingWithdrawalCount() external view returns (uint64);
@@ -282,10 +291,10 @@ interface ISet is ILFT {
   /// @notice Allows an on-chain or off-chain user to simulate the effects of their cancellation (i.e. view the refund
   /// amount, number of PTokens burned, and associated fees collected by the protocol) at the current block, given
   /// current on-chain conditions.
-  function previewCancellation(address _trigger, uint256 _protection)
-    external
-    view
-    returns (uint256 _refund, uint256 _ptokens, uint256 _reserveFeeAssets, uint256 _backstopFeeAssets);
+  function previewCancellation(
+    address _trigger,
+    uint256 _protection
+  ) external view returns (uint256 _refund, uint256 _ptokens, uint256 _reserveFeeAssets, uint256 _backstopFeeAssets);
 
   /// @notice Returns the utilization ratio of the specified market after canceling `_assets` of protection.
   function previewCancellationUtilization(address _trigger, uint256 _assets) external view returns (uint256);
@@ -322,15 +331,18 @@ interface ISet is ILFT {
 
   /// @notice Allows an on-chain or off-chain user to simulate the effects of their purchase (i.e. view the total cost,
   /// inclusive of fees, and the number of PTokens received) at the current block, given current on-chain conditions.
-  function previewPurchase(address _trigger, uint256 _protection)
-    external
-    view
-    returns (uint256 _totalCost, uint256 _ptokens);
+  function previewPurchase(
+    address _trigger,
+    uint256 _protection
+  ) external view returns (uint256 _totalCost, uint256 _ptokens);
 
   /// @notice Allows an on-chain or off-chain user to comprehensively simulate the effects of their purchase at the
   /// current block, given current on-chain conditions. This is similar to `previewPurchase` but additionally returns
   /// the cost before fees, as well as the fee breakdown.
-  function previewPurchaseData(address _trigger, uint256 _protection)
+  function previewPurchaseData(
+    address _trigger,
+    uint256 _protection
+  )
     external
     view
     returns (
@@ -351,10 +363,10 @@ interface ISet is ILFT {
 
   /// @notice Allows an on-chain or off-chain user to simulate the effects of their sale (i.e. view the refund amount,
   /// protection sold, and fees accrued by the protocol) at the current block, given current on-chain conditions.
-  function previewSale(address _trigger, uint256 _ptokens)
-    external
-    view
-    returns (uint256 _refund, uint256 _protection, uint256 _reserveFeeAssets, uint256 _backstopFeeAssets);
+  function previewSale(
+    address _trigger,
+    uint256 _ptokens
+  ) external view returns (uint256 _refund, uint256 _protection, uint256 _reserveFeeAssets, uint256 _backstopFeeAssets);
 
   /// @notice Allows an on-chain or off-chain user to simulate the effects of their withdrawal (i.e. view the number of
   /// shares burned) at the current block, given current on-chain conditions.
@@ -367,9 +379,11 @@ interface ISet is ILFT {
   function ptokenFactory() external view returns (address);
 
   /// @notice Purchase `_protection` amount of protection for the specified market, and send the PTokens to `_receiver`.
-  function purchase(address _trigger, uint256 _protection, address _receiver)
-    external
-    returns (uint256 _totalCost, uint256 _ptokens);
+  function purchase(
+    address _trigger,
+    uint256 _protection,
+    address _receiver
+  ) external returns (uint256 _totalCost, uint256 _ptokens);
 
   /// @notice Returns the market's reserve fee, backstop fee, and set owner fee applied on purchase.
   function purchaseFees(address _trigger)
@@ -388,9 +402,12 @@ interface ISet is ILFT {
   function remainingProtection(address _trigger) external view returns (uint256);
 
   /// @notice Sell `_ptokens` amount of ptokens for the specified market, and send the refund amount to `_receiver`.
-  function sell(address _trigger, uint256 _ptokens, address _receiver, address _owner)
-    external
-    returns (uint256 _refund, uint256 _protection);
+  function sell(
+    address _trigger,
+    uint256 _ptokens,
+    address _receiver,
+    address _owner
+  ) external returns (uint256 _refund, uint256 _protection);
 
   /// @notice Returns the shortfall (i.e. the amount of unbacked active protection) in a market, or zero if the market
   /// is fully backed.
@@ -451,8 +468,15 @@ interface ISet is ILFT {
   function decimals() external view returns (uint8);
   function name() external view returns (string memory);
   function nonces(address) external view returns (uint256);
-  function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)
-    external;
+  function permit(
+    address owner,
+    address spender,
+    uint256 value,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external;
   function symbol() external view returns (string memory);
   function totalSupply() external view returns (uint256);
   function transfer(address _to, uint256 _amount) external returns (bool);

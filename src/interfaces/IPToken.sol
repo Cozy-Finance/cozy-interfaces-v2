@@ -41,8 +41,15 @@ interface IPToken is ILFT {
   function mints(address, uint256) external view returns (uint128 amount, uint64 time, uint64 delay);
   function name() external view returns (string memory);
   function nonces(address) external view returns (uint256);
-  function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)
-    external;
+  function permit(
+    address owner,
+    address spender,
+    uint256 value,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external;
   function symbol() external view returns (string memory);
   function totalSupply() external view returns (uint256);
   function transfer(address _to, uint256 _amount) external returns (bool);

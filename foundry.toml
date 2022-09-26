@@ -6,5 +6,6 @@ remappings = [
 [profile.default.fmt]
 line_width = 100
 tab_width = 2
-func_attrs_with_params_multiline = false
+multiline_func_header = "params_first"
+single_line_statement_blocks = "preserve"
 number_underscore = "thousands"

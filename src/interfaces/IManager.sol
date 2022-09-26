@@ -170,17 +170,18 @@ interface IManager is ICState, IConfig {
 
   /// @notice Returns the amount of time that accrued towards the withdrawal delay for the `_set`, given the
   /// `_startTime` and the `_setState`.
-  function getWithdrawDelayTimeAccrued(ISet _set, uint256 _startTime, uint8 _setState)
-    external
-    view
-    returns (uint256 _activeTimeElapsed);
+  function getWithdrawDelayTimeAccrued(
+    ISet _set,
+    uint256 _startTime,
+    uint8 _setState
+  ) external view returns (uint256 _activeTimeElapsed);
 
   /// @notice Performs a binary search to return the cumulative inactive duration before a `_timestamp` based on
   /// the given `_inactivePeriods` that occurred.
-  function inactiveDurationBeforeTimestampLookup(uint256 _timestamp, InactivePeriod[] memory _inactivePeriods)
-    external
-    pure
-    returns (uint256);
+  function inactiveDurationBeforeTimestampLookup(
+    uint256 _timestamp,
+    InactivePeriod[] memory _inactivePeriods
+  ) external pure returns (uint256);
 
   /// @notice Returns true if there is at least one FROZEN market in the `_set`, false otherwise.
   function isAnyMarketFrozen(ISet _set) external view returns (bool);
@@ -205,10 +206,10 @@ interface IManager is ICState, IConfig {
   function isPauser(ISet _set, address _who) external view returns (bool);
 
   /// @notice Returns true if the provided `_setConfig` and `_marketInfos` pairing is generically valid, false otherwise.
-  function isValidConfiguration(SetConfig memory _setConfig, MarketInfo[] memory _marketInfos)
-    external
-    pure
-    returns (bool);
+  function isValidConfiguration(
+    SetConfig memory _setConfig,
+    MarketInfo[] memory _marketInfos
+  ) external pure returns (bool);
 
   /// @notice Check if a state transition is valid for a market in a set.
   function isValidMarketStateTransition(ISet _set, address _who, uint8 _from, uint8 _to) external view returns (bool);
@@ -219,10 +220,11 @@ interface IManager is ICState, IConfig {
 
   /// @notice Returns true if the provided `_setConfig` and `_marketInfos` pairing is valid for the `_set`,
   /// false otherwise.
-  function isValidUpdate(ISet _set, SetConfig memory _setConfig, MarketInfo[] memory _marketInfos)
-    external
-    view
-    returns (bool);
+  function isValidUpdate(
+    ISet _set,
+    SetConfig memory _setConfig,
+    MarketInfo[] memory _marketInfos
+  ) external view returns (bool);
 
   /// @notice Maps from set address to trigger address to metadata about previous inactive periods for markets.
   function marketInactivityData(address, address) external view returns (uint64 inactiveTransitionTime);

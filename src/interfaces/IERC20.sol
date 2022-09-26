@@ -19,8 +19,15 @@ interface IERC20 {
   /// @notice Returns the decimal places of the token.
   function decimals() external view returns (uint8);
   /// @notice Sets `_value` as the allowance of `_spender` over `_owner`s tokens, given a signed approval from the owner.
-  function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)
-    external;
+  function permit(
+    address owner,
+    address spender,
+    uint256 value,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external;
   /// @notice Returns the name of the token.
   function name() external view returns (string memory);
   /// @notice Returns the symbol of the token.
