@@ -253,23 +253,26 @@ interface IManager is ICState {
   /// @notice Maps from set address to a hash representing queued `SetConfig` and `MarketInfo[]` updates. This hash
   /// is used to prove that the `SetConfig` and `MarketInfo[]` params used when applying config updates are identical
   /// to the queued updates.
-  function queuedConfigUpdateHash(ISet _set) view external returns (bytes32);
+  function queuedConfigUpdateHash(ISet _set) external view returns (bytes32);
 
   /// @notice Returns the Cozy protocol SetFactory.
   function setFactory() external view returns (address);
 
   /// @notice Returns metadata about previous inactive periods for sets.
-  function setInactivityData(ISet _set) view external returns (uint64 inactiveTransitionTime);
+  function setInactivityData(ISet _set) external view returns (uint64 inactiveTransitionTime);
 
   /// @notice Returns the owner address for the given set.
-  function setOwner(ISet _set) view external returns (address);
+  function setOwner(ISet _set) external view returns (address);
 
   /// @notice Returns the pauser address for the given set.
-  function setPauser(ISet _set) view external returns (address);
+  function setPauser(ISet _set) external view returns (address);
 
   /// @notice For the specified set, returns whether it's a valid Cozy set, if it's approve to use the backstop,
   /// as well as timestamps for any configuration updates that are queued.
-  function sets(ISet _set) view external returns (bool exists, bool approved, uint64 configUpdateTime, uint64 configUpdateDeadline);
+  function sets(ISet _set)
+    external
+    view
+    returns (bool exists, bool approved, uint64 configUpdateTime, uint64 configUpdateDeadline);
 
   /// @notice Unpauses the set.
   function unpause(ISet _set) external;

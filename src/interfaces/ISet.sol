@@ -416,7 +416,7 @@ interface ISet is ILFT {
 
   /// @notice Returns the state of the market or set. Pass a market address to read that market's state, or the set's
   /// address to read the set's state.
-  function state(address _who) view external returns (ICState.CState _state);
+  function state(address _who) external view returns (ICState.CState _state);
 
   /// @notice Returns the set's total amount of fees available to drip to suppliers, and each market's contribution to that total amount.
   /// When protection is purchased, the supplier fee pools for the set and the market that protection is purchased from
@@ -436,7 +436,13 @@ interface ISet is ILFT {
   function unpause(ICState.CState _state) external;
 
   /// @notice Execute queued updates to setConfig and marketConfig. This should only be called by the Manager.
-  function updateConfigs(uint256 _leverageFactor, uint256 _depositFee, address _decayModel, address _dripModel, MarketInfo[] memory _marketInfos) external;
+  function updateConfigs(
+    uint256 _leverageFactor,
+    uint256 _depositFee,
+    address _decayModel,
+    address _dripModel,
+    MarketInfo[] memory _marketInfos
+  ) external;
 
   /// @notice Updates the state of the a market in the set.
   function updateMarketState(address _trigger, uint8 _newState) external;

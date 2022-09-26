@@ -17,10 +17,10 @@ interface IChainlinkTrigger is ICState {
   event TriggerStateUpdated(CState indexed state);
 
   /// @notice The canonical oracle, assumed to be correct.
-  function truthOracle() view external returns (AggregatorV3Interface);
+  function truthOracle() external view returns (AggregatorV3Interface);
 
   /// @notice The oracle we expect to diverge.
-  function trackingOracle() view external returns (AggregatorV3Interface);
+  function trackingOracle() external view returns (AggregatorV3Interface);
 
   /// @notice The current trigger state. This should never return PAUSED.
   function state() external returns (CState);
@@ -38,7 +38,7 @@ interface IChainlinkTrigger is ICState {
   function getSetsLength() external view returns (uint256);
 
   /// @notice Returns the trigger's manager contract.
-  function manager() view external returns (IManager);
+  function manager() external view returns (IManager);
 
   /// @notice The maximum amount of sets that can be added to this trigger.
   function MAX_SET_LENGTH() external view returns (uint256);
