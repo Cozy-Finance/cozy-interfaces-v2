@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "src/interfaces/IChainlinkTrigger.sol";
-import "src/interfaces/IManager.sol";
 
 /**
  * @notice Deploys Chainlink triggers that ensure two oracles stay within the given price

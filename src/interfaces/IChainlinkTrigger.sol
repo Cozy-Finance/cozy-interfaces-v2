@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "src/interfaces/ICState.sol";
-import "src/interfaces/ISet.sol";
+import "chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "src/interfaces/IManager.sol";
 
 /**
  * @notice A trigger contract that takes two addresses: a truth oracle and a tracking oracle.
@@ -17,10 +17,10 @@ interface IChainlinkTrigger is ICState {
   event TriggerStateUpdated(CState indexed state);
 
   /// @notice The canonical oracle, assumed to be correct.
-  function truthOracle() external view returns (address);
+  function truthOracle() view external returns (AggregatorV3Interface);
 
   /// @notice The oracle we expect to diverge.
-  function trackingOracle() external view returns (address);
+  function trackingOracle() view external returns (AggregatorV3Interface);
 
   /// @notice The current trigger state. This should never return PAUSED.
   function state() external returns (CState);
@@ -37,8 +37,8 @@ interface IChainlinkTrigger is ICState {
   /// @notice Returns the number of Sets that use this trigger in a market.
   function getSetsLength() external view returns (uint256);
 
-  /// @notice Returns the address of the trigger's manager.
-  function manager() external view returns (address);
+  /// @notice Returns the trigger's manager contract.
+  function manager() view external returns (IManager);
 
   /// @notice The maximum amount of sets that can be added to this trigger.
   function MAX_SET_LENGTH() external view returns (uint256);
@@ -59,7 +59,7 @@ interface IChainlinkTrigger is ICState {
   /// @notice Compares the oracle's price to the reference oracle and toggles the trigger if required.
   /// @dev This method executes the `programmaticCheck()` and makes the
   /// required state changes both in the trigger and the sets.
-  function runProgrammaticCheck() external returns (uint8);
+  function runProgrammaticCheck() external returns (CState);
 
   /// @notice Returns true if the trigger has been acknowledged by the entity responsible for transitioning trigger state.
   /// @notice Chainlink triggers are programmatic, so this always returns true.
