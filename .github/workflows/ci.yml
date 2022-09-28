@@ -10,7 +10,7 @@ on:
 
 jobs:
   pre_merge_ci:
-    name: "Lite CI"
+    name: "CI"
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
