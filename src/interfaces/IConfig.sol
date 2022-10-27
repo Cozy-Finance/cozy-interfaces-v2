@@ -10,11 +10,11 @@ import "src/interfaces/IDripDecayModel.sol";
  * value of 900 translates to 900/10,000 = 0.09, or 9%.
  */
 
-/// @notice  Set-level configuration.
+/// @notice Set-level configuration.
 struct SetConfig {
   uint256 leverageFactor; // The set's leverage factor.
   uint256 depositFee; // Fee applied on each deposit and mint.
-  IDripDecayModel dripDecayModel; // Contract defining the set's model used for decay rate for PTokens and the rate at which funds are dripped to suppliers for their yield.
+  IDripDecayModel dripDecayModel; // The model used for decay rate of PTokens and the rate at which funds are dripped to suppliers for their yield.
 }
 
 /// @notice Market-level configuration.
