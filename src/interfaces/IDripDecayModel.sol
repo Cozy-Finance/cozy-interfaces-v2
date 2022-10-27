@@ -12,5 +12,5 @@ interface IDripDecayModel {
   /// earned by suppliers. Annual yield can be computed as
   /// `supplierFeePool * dripRate * secondsPerYear / totalAssets`.
   /// @param utilization Current utilization of the set.
-  function dripRate(uint256 utilization) external view returns (uint256);
+  function dripDecayRate(uint256 utilization) external view returns (uint256);
 }
