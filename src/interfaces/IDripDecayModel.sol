@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 /**
- * @dev Interface that all drip models must conform to.
+ * @dev Interface that all DripDecay models must conform to.
  */
 interface IDripDecayModel {
   /// @notice Returns a rate which is used as either:
