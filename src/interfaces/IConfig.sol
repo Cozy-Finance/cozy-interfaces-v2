@@ -2,8 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "src/interfaces/ICostModel.sol";
-import "src/interfaces/IDecayModel.sol";
-import "src/interfaces/IDripModel.sol";
+import "src/interfaces/IDripDecayModel.sol";
 
 /**
  * @dev Structs used to define parameters in sets and markets.
@@ -15,8 +14,7 @@ import "src/interfaces/IDripModel.sol";
 struct SetConfig {
   uint256 leverageFactor; // The set's leverage factor.
   uint256 depositFee; // Fee applied on each deposit and mint.
-  IDecayModel decayModel; // Contract defining the decay rate for PTokens in this set.
-  IDripModel dripModel; // Contract defining the rate at which funds are dripped to suppliers for their yield.
+  IDripDecayModel dripDecayModel; // Contract defining the set's model used for decay rate for PTokens and the rate at which funds are dripped to suppliers for their yield.
 }
 
 /// @notice Market-level configuration.
