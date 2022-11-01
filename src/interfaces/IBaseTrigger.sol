@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "src/interfaces/IManager.sol";
-import "src/interfaces/ITrigger.sol";
+import "./IManager.sol";
+import "./ITrigger.sol";
 
 /**
  * @dev Additional functions that are recommended to have in a trigger, but are not required.

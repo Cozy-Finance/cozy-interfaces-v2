@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "src/interfaces/ICostModel.sol";
-import "src/interfaces/IDripDecayModel.sol";
+import "./ICostModel.sol";
+import "./IDripDecayModel.sol";
 
 /**
  * @dev Structs used to define parameters in sets and markets.

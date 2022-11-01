@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "src/interfaces/ICState.sol";
-import "src/interfaces/ISet.sol";
+import "./ICState.sol";
+import "./ISet.sol";
 
 /**
  * @notice This is an automated trigger contract which will move markets into a
