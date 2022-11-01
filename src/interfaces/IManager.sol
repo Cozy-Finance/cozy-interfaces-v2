@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "src/interfaces/IConfig.sol";
-import "src/interfaces/ICState.sol";
-import "src/interfaces/IERC20.sol";
-import "src/interfaces/ISet.sol";
+import "./IConfig.sol";
+import "./ICState.sol";
+import "./IERC20.sol";
+import "./ISet.sol";
 
 /**
  * @notice The Manager is in charge of the full Cozy protocol. Configuration parameters are defined here, it serves

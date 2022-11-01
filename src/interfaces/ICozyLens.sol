@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "src/interfaces/IPToken.sol";
-import "src/interfaces/ISet.sol";
+import "./IPToken.sol";
+import "./ISet.sol";
 
 /**
  * @notice Helper contract for reading data from the Cozy protocol.

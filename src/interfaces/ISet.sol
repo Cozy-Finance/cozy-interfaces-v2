@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "src/interfaces/IConfig.sol";
-import "src/interfaces/ICState.sol";
-import "src/interfaces/ILFT.sol";
+import "./IConfig.sol";
+import "./ICState.sol";
+import "./ILFT.sol";
 
 /**
  * @notice All protection markets live within a set.
