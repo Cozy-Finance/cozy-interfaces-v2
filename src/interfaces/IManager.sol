@@ -120,6 +120,9 @@ interface IManager is ICState {
   /// @notice Callable by the owner of `_set` and sends accrued fees to `_receiver`.
   function claimSetFees(ISet _set, address _receiver) external;
 
+  /// @notice Callable by the owner of the sets in `_sets` and sends accrued fees to `_receiver`.
+  function claimSetFees(ISet[] calldata _sets, address _receiver) external;
+
   /// @notice Configuration updates are queued, then can be applied after this delay elapses.
   function configUpdateDelay() external view returns (uint32);
 
@@ -237,6 +240,10 @@ interface IManager is ICState {
 
   /// @notice Pauses the set.
   function pause(ISet _set) external;
+
+  /// @notice Pauses an array of sets.
+  /// @param _sets is an array of sets sorted by address.
+  function pause(ISet[] calldata _sets) external;
 
   /// @notice Returns the manager Contract pauser address.
   function pauser() external view returns (address);
