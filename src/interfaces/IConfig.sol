@@ -23,6 +23,7 @@ struct MarketInfo {
   ICostModel costModel; // Contract defining the cost model for this market.
   uint16 weight; // Weight of this market. Sum of weights across all markets must sum to 100% (1e4, 1 zoc).
   uint16 purchaseFee; // Fee applied on each purchase.
+  uint16 cancellationPenalty; // Penalty applied on protection refunds.
 }
 
 /// @notice PTokens and are not eligible to claim protection until maturity. It takes `purchaseDelay` seconds for a PToken
