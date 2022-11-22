@@ -14,7 +14,6 @@ import "./IDripDecayModel.sol";
 struct SetConfig {
   uint256 leverageFactor; // The set's leverage factor.
   uint256 depositFee; // Fee applied on each deposit and mint.
-  IDripDecayModel dripDecayModel; // The model used for decay rate of PTokens and the rate at which funds are dripped to suppliers for their yield.
 }
 
 /// @notice Market-level configuration.
@@ -24,6 +23,7 @@ struct MarketInfo {
   uint16 weight; // Weight of this market. Sum of weights across all markets must sum to 100% (1e4, 1 zoc).
   uint16 purchaseFee; // Fee applied on each purchase.
   uint16 cancellationPenalty; // Penalty applied on protection refunds.
+  IDripDecayModel dripDecayModel; // The model used for decay rate of PTokens and the rate at which funds are dripped to suppliers for their yield.
 }
 
 /// @notice PTokens and are not eligible to claim protection until maturity. It takes `purchaseDelay` seconds for a PToken
