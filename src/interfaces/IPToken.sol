@@ -12,15 +12,6 @@ interface IPToken is ILFT {
   /// @notice Version number of this implementation contract.
   function VERSION() external view returns (uint256);
 
-  /// @notice Address of the Cozy protocol manager.
-  function manager() external view returns (address);
-
-  /// @notice The set this token is for. Markets in a set are uniquely identified by their trigger.
-  function set() external view returns (address);
-
-  /// @notice The trigger this token is for. Markets in a set are uniquely identified by their trigger.
-  function trigger() external view returns (address);
-
   /// @notice Mints `_amount` of tokens to `_to`.
   function mint(address _to, uint256 _amount) external;
 
