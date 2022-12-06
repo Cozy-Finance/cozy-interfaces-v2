@@ -15,6 +15,15 @@ interface IMarket is IPToken {
     uint16 cancellationPenalty; // Penalty applied on protection refunds.
   }
 
+  /// @notice PTokens and are not eligible to claim protection until maturity. It takes `purchaseDelay` seconds for a PToken
+  /// to mature, but time during an InactivePeriod is not counted towards maturity. Similarly, there is a delay
+  /// between requesting a withdrawal and completing that withdrawal, and inactive periods do not count towards that
+  /// withdrawal delay.
+  struct InactivePeriod {
+    uint64 startTime; // Timestamp that this inactive period began.
+    uint64 cumulativeDuration; // Cumulative inactive duration of all prior inactive periods and this inactive period at the point when this inactive period ended.
+  }
+
   /// @dev Emitted when a user cancels protection. This is a market-level event.
   event Cancellation(
     address caller,
