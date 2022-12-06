@@ -9,42 +9,21 @@ import "./ILFT.sol";
  * @notice All protection markets live within a set.
  */
 interface ISet is ILFT {
-  /// @dev Emitted when a user cancels protection. This is a market-level event.
-  event Cancellation(
-    address caller,
-    address indexed receiver,
-    address indexed owner,
-    uint256 protection,
-    uint256 ptokens,
-    address indexed trigger,
-    uint256 refund
-  );
 
-  /// @dev Emitted when a user claims their protection payout when a market is
-  /// triggered. This is a market-level event
-  event Claim(
-    address caller,
-    address indexed receiver,
-    address indexed owner,
-    uint256 protection,
-    uint256 ptokens,
-    address indexed trigger
-  );
+  /// @notice Set-level configuration.
+  struct Set {
+    IAccounting accounting;
+    uint256 depositFee; // Fee applied on each deposit and mint.
+  }
 
   /// @dev Emitted when a user deposits assets or mints shares. This is a
   /// set-level event.
-  event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
-
-  /// @dev Emitted when a user purchases protection from a market. This is a
-  /// market-level event.
-  event Purchase(
-    address indexed caller,
-    address indexed owner,
-    uint256 protection,
-    uint256 ptokens,
-    address indexed trigger,
-    uint256 cost
-  );
+  event Deposit(
+    address indexed caller, 
+    address indexed owner, 
+    uint256 assets, 
+    uint256 shares
+    );
 
   /// @dev Emitted when a user withdraws assets or redeems shares. This is a
   /// set-level event.
@@ -77,21 +56,6 @@ interface ISet is ILFT {
     uint64 delay; // Protocol withdrawal delay at the time of request.
   }
 
-  /// @notice Devalues all outstanding protection by applying unaccrued decay to the specified market.
-  function accrueDecay(address _trigger) external;
-
-  /// @notice Returns the amount of assets for the Cozy backstop.
-  function accruedCozyBackstopFees() external view returns (uint128);
-
-  /// @notice Returns the amount of assets for generic Cozy reserves.
-  function accruedCozyReserveFees() external view returns (uint128);
-
-  /// @notice Returns the amount of assets accrued to the set owner.
-  function accruedSetOwnerFees() external view returns (uint128);
-
-  /// @notice Returns the amount of outstanding protection that is currently active for the specified market.
-  function activeProtection(address _trigger) external view returns (uint256);
-
   /// @notice Returns the underlying asset used by this set.
   function asset() external view returns (address);
 
@@ -104,26 +68,6 @@ interface ISet is ILFT {
 
   /// @notice Returns the balance of matured tokens held by `_user`.
   function balanceOfMatured(address _user) external view returns (uint256 _balance);
-
-  /// @notice Cancel `_protection` amount of protection for the specified market, and send the refund amount to `_receiver`.
-  function cancel(
-    address _trigger,
-    uint256 _protection,
-    address _receiver,
-    address _owner
-  ) external returns (uint256 _refund, uint256 _ptokens);
-
-  /// @notice Claims protection payout after the market for `_trigger` is triggered. Pays out the specified amount of
-  /// `_protection` held by `_owner` by sending it to `_receiver`.
-  function claim(
-    address _trigger,
-    uint256 _protection,
-    address _receiver,
-    address _owner
-  ) external returns (uint256 _ptokens);
-
-  /// @notice Transfers accrued reserve and backstop fees to the `_owner` address and `_backstop` address, respectively.
-  function claimCozyFees(address _owner, address _backstop) external;
 
   /// @notice Transfers accrued set owner fees to `_receiver`.
   function claimSetFees(address _receiver) external;
