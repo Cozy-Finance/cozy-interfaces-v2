@@ -5,6 +5,7 @@ import "./IConfig.sol";
 import "./ICState.sol";
 import "./ILFT.sol";
 import "./IAccounting.sol";
+import "./IMarket.sol";
 
 /**
  * @notice All protection markets live within a set.
@@ -14,6 +15,7 @@ interface ISet is ILFT {
   /// @notice Set-level configuration.
   struct Set {
     IAccounting accounting;
+    IMarket[] markets;
     uint256 depositFee; // Fee applied on each deposit and mint.
   }
 
@@ -59,9 +61,6 @@ interface ISet is ILFT {
 
   /// @notice Returns the underlying asset used by this set.
   function asset() external view returns (address);
-
-  /// @notice Returns the internal asset balance - equivalent to `asset.balanceOf(address(set))` if no one transfers tokens directly to the contract.
-  function assetBalance() external view returns (uint128);
 
   /// @notice Returns the amount of assets pending withdrawal. These assets are unavailable for new protection purchases but
   /// are available to payout protection in the event of a market becoming triggered.
