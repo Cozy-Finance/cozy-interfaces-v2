@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "./IConfig.sol";
 import "./ICState.sol";
 import "./ILFT.sol";
+import "./IAccounting.sol";
 
 /**
  * @notice All protection markets live within a set.
