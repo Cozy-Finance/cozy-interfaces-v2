@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./IPToken.sol";
 import "./ISet.sol";
+import "./IConfig.sol";
 
 /**
  * @notice Helper contract for reading data from the Cozy protocol.

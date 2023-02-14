@@ -13,4 +13,22 @@ interface ICState {
     PAUSED,
     TRIGGERED
   }
+
+  enum MarketState {
+    ACTIVE,
+    FROZEN,
+    TRIGGERED
+  }
+
+  enum SetState {
+    ACTIVE,
+    PAUSED,
+    FROZEN
+  }
+
+  enum TriggerState {
+    ACTIVE,
+    FROZEN,
+    TRIGGERED
+  }
 }
