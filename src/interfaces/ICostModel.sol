@@ -18,4 +18,10 @@ interface ICostModel {
   /// @param utilization Current utilization of the market.
   /// @param newUtilization Utilization ratio of the market after cancelling protection.
   function refundFactor(uint256 utilization, uint256 newUtilization) external view returns (uint256);
+
+  /// @notice Returns true if the cost model's storage variables need to be updated.
+  function shouldUpdate() external view returns (bool);
+
+  /// @notice Updates the cost model's storage variables.
+  function update() external;
 }
