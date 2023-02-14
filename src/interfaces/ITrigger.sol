@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "./ICState.sol";
-import "./ISet.sol";
+import {ICState} from "./ICState.sol";
+import {ISet} from "./ISet.sol";
 
 /**
  * @dev The minimal functions a trigger must implement to work with the Cozy protocol.
