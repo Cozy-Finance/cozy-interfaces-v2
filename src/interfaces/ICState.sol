@@ -6,14 +6,6 @@ pragma solidity ^0.8.0;
  * @dev All states except TRIGGERED are valid for sets, and all states except PAUSED are valid for markets/triggers.
  */
 interface ICState {
-  /// @notice The set of all Cozy states.
-  enum CState {
-    ACTIVE,
-    FROZEN,
-    PAUSED,
-    TRIGGERED
-  }
-
   enum MarketState {
     ACTIVE,
     FROZEN,

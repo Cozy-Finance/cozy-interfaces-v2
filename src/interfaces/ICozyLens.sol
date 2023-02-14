@@ -45,10 +45,10 @@ interface ICozyLens {
   // -----------------------------
 
   /// @notice Returns the state of the market, identified by its `_set` and `_trigger` address.
-  function getMarketState(ISet _set, address _trigger) external view returns (ICState.CState _state);
+  function getMarketState(ISet _set, address _trigger) external view returns (ICState.MarketState _state);
 
   /// @notice Returns the state of the `_set`.
-  function getSetState(ISet _set) external view returns (ICState.CState _state);
+  function getSetState(ISet _set) external view returns (ICState.SetState _state);
 
   /// @notice Returns the PToken address of the market, identified by its `_set` and `_trigger` address.
   function getPToken(ISet _set, address _trigger) external view returns (IPToken _ptoken);

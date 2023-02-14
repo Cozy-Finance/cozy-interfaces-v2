@@ -12,7 +12,7 @@ interface ITrigger is ICState {
   event SetAdded(ISet set);
 
   /// @dev Emitted when a trigger's state is updated.
-  event TriggerStateUpdated(CState indexed state);
+  event TriggerStateUpdated(TriggerState indexed state);
 
   /// @notice The current trigger state. This should never return PAUSED.
   function state() external returns (TriggerState);

@@ -4,7 +4,8 @@ pragma solidity ^0.8.0;
 import "./IConfig.sol";
 import "./ICState.sol";
 import "./IERC20.sol";
-import "./ISet.sol";
+import {ISet} from "./ISet.sol";
+import "./IConfig.sol";
 
 /**
  * @notice The Manager is in charge of the full Cozy protocol. Configuration parameters are defined here, it serves
@@ -39,7 +40,7 @@ interface IManager is ICState {
   event FeesUpdated(Fees fees);
 
   /// @dev Emitted when a market, defined by it's trigger address, changes state.
-  event MarketStateUpdated(address indexed set, address indexed trigger, CState indexed state);
+  event MarketStateUpdated(address indexed set, address indexed trigger, MarketState indexed state);
 
   /// @dev Emitted when the owner address is updated.
   event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
@@ -57,7 +58,7 @@ interface IManager is ICState {
   event SetPauserUpdated(address indexed set, address indexed pauser);
 
   /// @dev Emitted when the Set's state is updated.
-  event SetStateUpdated(address indexed set, CState indexed state);
+  event SetStateUpdated(address indexed set, SetState indexed state);
 
   /// @notice Used to update backstop approvals.
   struct BackstopApproval {
@@ -238,9 +239,6 @@ interface IManager is ICState {
   /// @notice Returns the Manager contract owner address.
   function owner() external view returns (address);
 
-  /// @notice Pauses the set.
-  function pause(ISet _set) external;
-
   /// @notice Pauses an array of sets.
   /// @param _sets is an array of sets sorted by address.
   function pause(ISet[] calldata _sets) external;
@@ -281,18 +279,11 @@ interface IManager is ICState {
     view
     returns (bool exists, bool approved, uint64 configUpdateTime, uint64 configUpdateDeadline);
 
-  /// @notice Unpauses the set.
-  function unpause(ISet _set) external;
-
   /// @notice Update params related to config updates.
   function updateConfigParams(uint256 _configUpdateDelay, uint256 _configUpdateGracePeriod) external;
 
   /// @notice Signal an update to the set config and market configs. Existing queued updates are overwritten.
   function updateConfigs(ISet _set, SetConfig memory _setConfig, MarketInfo[] memory _marketInfos) external;
-
-  /// @notice Called by a trigger when it's state changes to `_newMarketState` to execute the corresponding state
-  /// change in the market for the given `_set`.
-  function updateMarketState(ISet _set, CState _newMarketState) external;
 
   /// @notice Updates the owner of `_set` to `_owner`.
   function updateSetOwner(ISet _set, address _owner) external;
