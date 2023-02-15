@@ -267,12 +267,8 @@ interface IManager is ICState {
   /// @notice Returns the pauser address for the given set.
   function setPauser(ISet _set) external view returns (address);
 
-  /// @notice For the specified set, returns whether it's a valid Cozy set, if it's approve to use the backstop,
-  /// as well as timestamps for any configuration updates that are queued.
-  function sets(ISet _set)
-    external
-    view
-    returns (bool exists, bool approved, uint64 configUpdateTime, uint64 configUpdateDeadline);
+  /// @notice For the specified set, returns whether it's a valid Cozy set.
+  function isSet(ISet _set) external view returns (bool);
 
   /// @notice Unpauses the set.
   function unpause(ISet _set) external;

@@ -445,7 +445,7 @@ interface ISet is ILFT {
   ) external;
 
   /// @notice Updates the state of the a market in the set.
-  function updateMarketState(address _trigger, uint8 _newState) external;
+  function updateMarketState(ICState.MarketState _newState) external;
 
   /// @notice Updates the set's state to `_state.
   function updateSetState(ICState.CState _state) external;
