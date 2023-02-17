@@ -14,7 +14,7 @@ interface IChainlinkTrigger is ICState {
   event SetAdded(ISet set);
 
   /// @dev Emitted when a trigger's state is updated.
-  event TriggerStateUpdated(CState indexed state);
+  event TriggerStateUpdated(MarketState indexed state);
 
   /// @notice The canonical oracle, assumed to be correct.
   function truthOracle() external view returns (AggregatorV3Interface);
@@ -23,7 +23,7 @@ interface IChainlinkTrigger is ICState {
   function trackingOracle() external view returns (AggregatorV3Interface);
 
   /// @notice The current trigger state. This should never return PAUSED.
-  function state() external returns (CState);
+  function state() external returns (MarketState);
 
   /// @notice Called by the Manager to add a newly created set to the trigger's list of sets.
   function addSet(ISet set) external;
@@ -59,7 +59,7 @@ interface IChainlinkTrigger is ICState {
   /// @notice Compares the oracle's price to the reference oracle and toggles the trigger if required.
   /// @dev This method executes the `programmaticCheck()` and makes the
   /// required state changes both in the trigger and the sets.
-  function runProgrammaticCheck() external returns (CState);
+  function runProgrammaticCheck() external returns (MarketState);
 
   /// @notice Returns true if the trigger has been acknowledged by the entity responsible for transitioning trigger state.
   /// @notice Chainlink triggers are programmatic, so this always returns true.
