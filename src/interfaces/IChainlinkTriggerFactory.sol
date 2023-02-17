@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "./IChainlinkTrigger.sol";
+import {AggregatorV3Interface} from "chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import {IChainlinkTrigger} from "src/interfaces/IChainlinkTrigger.sol";
+import {IManager} from "src/interfaces/IManager.sol";
+import {TriggerMetadata} from "src/structs/Triggers.sol";
 
 /**
  * @notice Deploys Chainlink triggers that ensure two oracles stay within the given price
@@ -9,15 +12,6 @@ import "./IChainlinkTrigger.sol";
  * for e.g. ensuring stablecoins maintain their peg.
  */
 interface IChainlinkTriggerFactory {
-  struct TriggerMetadata {
-    // The name that should be used for markets that use the trigger.
-    string name;
-    // A human-readable description of the trigger.
-    string description;
-    // The URI of a logo image to represent the trigger.
-    string logoURI;
-  }
-
   /// @dev Emitted when the factory deploys a trigger.
   /// @param trigger Address at which the trigger was deployed.
   /// @param triggerConfigId Unique identifier of the trigger based on its configuration.

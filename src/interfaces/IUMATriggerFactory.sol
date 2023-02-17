@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "uma-protocol/packages/core/contracts/oracle/interfaces/FinderInterface.sol";
-import "./IUMATrigger.sol";
+import {FinderInterface} from "uma-protocol/packages/core/contracts/oracle/interfaces/FinderInterface.sol";
+import {IERC20} from "src/interfaces/IERC20.sol";
+import {IUMATrigger} from "src/interfaces/IUMATrigger.sol";
 
 /**
  * @notice This is a utility contract to make it easy to deploy UMATriggers for

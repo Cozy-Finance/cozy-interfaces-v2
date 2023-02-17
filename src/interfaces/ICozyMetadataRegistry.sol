@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "./ISet.sol";
+import {ISet} from "src/interfaces/ISet.sol";
 
 interface ICozyMetadataRegistry {
   /// @notice Required metadata for a given set or trigger.
