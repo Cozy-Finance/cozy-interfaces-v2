@@ -1,485 +1,336 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "./IConfig.sol";
-import "./ICState.sol";
-import "./ILFT.sol";
+import {MarketState, SetState} from "src/structs/StateEnums.sol";
+import {ICostModel} from "src/interfaces/ICostModel.sol";
+import {IDripDecayModel} from "src/interfaces/IDripDecayModel.sol";
+import {IPToken} from "src/interfaces/IPToken.sol";
+import {ITrigger} from "src/interfaces/ITrigger.sol";
 
 /**
  * @notice All protection markets live within a set.
  */
-interface ISet is ILFT {
-  /// @dev Emitted when a user cancels protection. This is a market-level event.
-  event Cancellation(
-    address caller,
-    address indexed receiver,
-    address indexed owner,
-    uint256 protection,
-    uint256 ptokens,
-    address indexed trigger,
-    uint256 refund
-  );
-
-  /// @dev Emitted when a user claims their protection payout when a market is
-  /// triggered. This is a market-level event
-  event Claim(
-    address caller,
-    address indexed receiver,
-    address indexed owner,
-    uint256 protection,
-    uint256 ptokens,
-    address indexed trigger
-  );
-
-  /// @dev Emitted when a user deposits assets or mints shares. This is a
-  /// set-level event.
+interface ISet {
+  /// @dev Emitted when a user deposits assets or mints shares. This is a set-level event.
   event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
 
-  /// @dev Emitted when a user purchases protection from a market. This is a
-  /// market-level event.
+  /// @dev Emitted when fees are accrued.
+  event FeesAccrued(uint128 reserveFees, uint128 backstopFees, uint128 setOwnerFees);
+
+  /// @notice Emitted when a Market changes state.
+  event MarketStateUpdated(uint16 indexed marketIdx, ITrigger indexed trigger, MarketState indexed updatedTo_);
+
+  /// @dev Emitted when the first step of the two step ownership transfer is executed.
+  event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
+
+  /// @dev Emitted when the owner address is updated.
+  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+  /// @dev Emitted when the pauser address is updated.
+  event PauserUpdated(address indexed newPauser);
+
+  /// @dev Emitted when a user purchases protection from a market. This is a market-level event.
   event Purchase(
     address indexed caller,
-    address indexed owner,
+    address indexed receiver,
     uint256 protection,
     uint256 ptokens,
-    address indexed trigger,
+    IPToken indexed ptoken,
     uint256 cost
   );
 
-  /// @dev Emitted when a user withdraws assets or redeems shares. This is a
-  /// set-level event.
-  event Withdraw(
+  /// @dev Emitted when a user redeems shares. This is a set-level event.
+  event Redeem(
     address caller,
     address indexed receiver,
     address indexed owner,
     uint256 assets,
     uint256 shares,
-    uint256 indexed withdrawalId
+    uint256 indexed redemptionId
   );
 
-  /// @dev Emitted when a user queues a withdrawal or redeem to be completed
-  /// later. This is a set-level event.
-  event WithdrawalPending(
+  /// @dev Emitted when a user queues a redemption or redeem to be completed later. This is a set-level event.
+  event RedemptionPending(
     address caller,
     address indexed receiver,
     address indexed owner,
     uint256 assets,
     uint256 shares,
-    uint256 indexed withdrawalId
+    uint256 indexed redemptionId
   );
 
-  struct PendingWithdrawal {
-    uint128 shares; // Shares burned to queue the withdrawal.
-    uint128 assets; // Amount of assets that will be paid out upon completion of the withdrawal.
-    address owner; // Owner of the shares.
-    uint64 queueTime; // Timestamp at which the withdrawal was requested.
-    address receiver; // Address the assets will be sent to.
-    uint64 delay; // Protocol withdrawal delay at the time of request.
+  /// @dev Emitted when a user sells protection. This is a market-level event.
+  event Sell(
+    address caller,
+    address indexed receiver,
+    address indexed owner,
+    uint256 protection,
+    uint256 ptokens,
+    IPToken indexed ptoken,
+    uint256 refund
+  );
+
+  /// @notice Emitted when the Set changes state.
+  event SetStateUpdated(SetState indexed updatedTo_);
+
+  struct AssetStorage {
+    uint128 assetBalance;
+    uint128 accruedSetOwnerFees;
+    uint128 accruedCozyReserveFees;
+    uint128 accruedCozyBackstopFees;
+    uint128 totalPurchasesFees;
+    uint128 totalSalesFees;
+    uint128 assetsPendingRedemption;
   }
 
-  /// @notice Devalues all outstanding protection by applying unaccrued decay to the specified market.
-  function accrueDecay(address _trigger) external;
+  struct DepositFeesAssets {
+    uint128 assets;
+    uint128 reserveFeeAssets;
+    uint128 backstopFeeAssets;
+    uint128 setOwnerFeeAssets;
+  }
 
-  /// @notice Returns the amount of assets for the Cozy backstop.
-  function accruedCozyBackstopFees() external view returns (uint128);
+  struct MarketConfig {
+    ITrigger trigger;
+    ICostModel costModel;
+    IDripDecayModel dripDecayModel;
+    uint16 weight;
+    uint16 purchaseFee;
+    uint16 saleFee;
+  }
 
-  /// @notice Returns the amount of assets for generic Cozy reserves.
-  function accruedCozyReserveFees() external view returns (uint128);
+  struct MarketConfigStorage {
+    ICostModel costModel;
+    IDripDecayModel dripDecayModel;
+    uint16 weight;
+    uint16 purchaseFee;
+    uint16 saleFee;
+  }
 
-  /// @notice Returns the amount of assets accrued to the set owner.
-  function accruedSetOwnerFees() external view returns (uint128);
+  struct MintData {
+    uint176 amount;
+    uint40 time;
+    uint40 delay;
+  }
 
-  /// @notice Returns the amount of outstanding protection that is currently active for the specified market.
-  function activeProtection(address _trigger) external view returns (uint256);
+  struct PurchaseFeesAssets {
+    uint128 cost;
+    uint128 reserveFeeAssets;
+    uint128 backstopFeeAssets;
+    uint128 setOwnerFeeAssets;
+  }
 
-  /// @notice Returns the underlying asset used by this set.
+  struct RedemptionPreview {
+    uint40 delayRemaining;
+    uint176 shares;
+    uint128 assets;
+    address owner;
+    address receiver;
+  }
+
+  struct SaleFeesAssets {
+    uint128 reserveFeeAssets;
+    uint128 backstopFeeAssets;
+    uint128 supplierFeeAssets;
+  }
+
+  struct SetConfig {
+    uint32 leverageFactor;
+    uint16 depositFee;
+  }
+
+  /// @notice Callable by the pending owner to transfer ownership to them.
+  function acceptOwnership() external;
+
+  /// @notice Retrieve set-level internal accounting balances.
+  function accounting()
+    external
+    view
+    returns (
+      uint128 assetBalance,
+      uint128 accruedSetOwnerFees,
+      uint128 accruedCozyReserveFees,
+      uint128 accruedCozyBackstopFees,
+      uint128 totalPurchasesFees,
+      uint128 totalSalesFees,
+      uint128 assetsPendingRedemption
+    );
+
+  /// @notice The underlying asset of the set.
   function asset() external view returns (address);
 
-  /// @notice Returns the internal asset balance - equivalent to `asset.balanceOf(address(set))` if no one transfers tokens directly to the contract.
-  function assetBalance() external view returns (uint128);
+  /// @notice Cozy protocol Backstop.
+  function backstop() external view returns (address);
 
-  /// @notice Returns the amount of assets pending withdrawal. These assets are unavailable for new protection purchases but
-  /// are available to payout protection in the event of a market becoming triggered.
-  function assetsPendingWithdrawal() external view returns (uint128);
+  /// @notice Claims protection payout after the market is triggered. Burns the specified number of
+  /// `ptokens_` held by `owner_` and sends the payout to `receiver_`.
+  function claim(uint16 marketId_, uint256 ptokens_, address receiver_, address owner_) external returns (uint256);
 
-  /// @notice Returns the balance of matured tokens held by `_user`.
-  function balanceOfMatured(address _user) external view returns (uint256 _balance);
+  /// @notice Transfers accrued reserve and backstop fees to the `owner_` address and `backstop_` address, respectively.
+  function claimCozyFees(
+    address owner_,
+    address backstop_
+  ) external returns (uint128 reserveAmount_, uint128 backstopAmount_);
 
-  /// @notice Cancel `_protection` amount of protection for the specified market, and send the refund amount to `_receiver`.
-  function cancel(
-    address _trigger,
-    uint256 _protection,
-    address _receiver,
-    address _owner
-  ) external returns (uint256 _refund, uint256 _ptokens);
+  /// @notice Transfers accrued Set Owner fees to the `receiver_` address.
+  function claimSetFees(address receiver_) external returns (uint128 setOwnerFees_);
 
-  /// @notice Claims protection payout after the market for `_trigger` is triggered. Pays out the specified amount of
-  /// `_protection` held by `_owner` by sending it to `_receiver`.
-  function claim(
-    address _trigger,
-    uint256 _protection,
-    address _receiver,
-    address _owner
-  ) external returns (uint256 _ptokens);
+  /// @notice Completes the redemption request for the specified redemption ID.
+  function completeRedeem(uint64 redemptionId_) external returns (uint256 assetsRedeemed_);
 
-  /// @notice Transfers accrued reserve and backstop fees to the `_owner` address and `_backstop` address, respectively.
-  function claimCozyFees(address _owner, address _backstop) external;
-
-  /// @notice Transfers accrued set owner fees to `_receiver`.
-  function claimSetFees(address _receiver) external;
-
-  /// @notice Completes the withdraw request for the specified ID, sending the assets to the stored `_receiver` address.
-  function completeRedeem(uint256 _redemptionId) external;
-
-  /// @notice Completes the withdraw request for the specified ID, and sends assets to the new `_receiver` instead of
-  /// the stored receiver.
-  function completeRedeem(uint256 _redemptionId, address _receiver) external;
-
-  /// @notice Completes the withdraw request for the specified ID, sending the assets to the stored `_receiver` address.
-  function completeWithdraw(uint256 _withdrawalId) external;
-
-  /// @notice Completes the withdraw request for the specified ID, and sends assets to the new `_receiver` instead of
-  /// the stored receiver.
-  function completeWithdraw(uint256 _withdrawalId, address _receiver) external;
-
-  /// @notice The amount of `_assets` that the Set would exchange for the amount of `_shares` provided, in an ideal
+  /// @notice The amount of assets that the set would exchange for the amount of `shares_` provided, in an ideal
   /// scenario where all the conditions are met.
-  function convertToAssets(uint256 shares) external view returns (uint256);
+  function convertToAssets(uint256 shares_) external view returns (uint256);
 
-  /// @notice The amount of PTokens that the Vault would exchange for the amount of protection, in an ideal scenario
+  /// @notice The amount of PTokens that the set would exchange for the amount of protection, in an ideal scenario
   /// where all the conditions are met.
-  function convertToPTokens(address _trigger, uint256 _protection) external view returns (uint256);
+  function convertToPTokens(uint16 marketId_, uint256 protection_) external view returns (uint256);
 
-  /// @notice The amount of protection that the Vault would exchange for the amount of PTokens, in an ideal scenario
+  /// @notice The amount of protection that the set would exchange for the amount of PTokens, in an ideal scenario
   /// where all the conditions are met.
-  function convertToProtection(address _trigger, uint256 _ptokens) external view returns (uint256);
+  function convertToProtection(uint16 marketId_, uint256 ptokens_) external view returns (uint256);
 
-  /// @notice The amount of `_shares` that the Set would exchange for the amount of `_assets` provided, in an ideal
+  /// @notice The amount of shares that the Set would exchange for the amount of assets provided, in an ideal
   /// scenario where all the conditions are met.
-  function convertToShares(uint256 assets) external view returns (uint256);
+  function convertToShares(uint256 assets_) external view returns (uint256);
 
-  /// @notice Returns the cost factor when purchasing the specified amount of `_protection` in the given market.
-  function costFactor(address _trigger, uint256 _protection) external view returns (uint256 _costFactor);
-
-  /// @notice Returns the current drip rate for the set.
-  function currentDripRate() external view returns (uint256);
-
-  /// @notice Returns the active protection, decay rate, and last decay time. The response is encoded into a word.
-  function dataApd(address) external view returns (bytes32);
-
-  /// @notice Returns the state and PToken address for a market, and the state for the set. The response is encoded into a word.
-  function dataSp(address) external view returns (bytes32);
-
-  /// @notice Returns the address of the set's decay model. The decay model governs how fast outstanding protection loses it's value.
-  function decayModel() external view returns (address);
-
-  /// @notice Supply protection by minting `_shares` shares to `_receiver` by depositing exactly `_assets` amount of
+  /// @notice Supply protection by minting `shares_` shares to `receiver_` by depositing exactly `assets_` amount of
   /// underlying tokens.
-  function deposit(uint256 _assets, address _receiver) external returns (uint256 _shares);
+  function deposit(
+    uint256 assets_,
+    address receiver_
+  ) external returns (uint256 shares_, DepositFeesAssets memory depositFeesAssets_);
 
-  /// @notice Returns the fee charged by the Set owner on deposits.
-  function depositFee() external view returns (uint256);
+  /// @notice Execute queued updates to set config and market configs.
+  function finalizeUpdateConfigs(SetConfig memory setConfig_, MarketConfig[] memory marketConfigs_) external;
 
-  /// @notice Returns the market's reserve fee, backstop fee, and set owner fee applied on deposit.
-  function depositFees() external view returns (uint256 _reserveFee, uint256 _backstopFee, uint256 _setOwnerFee);
+  /// @notice Returns metadata about the most recently queued set/market configuration update.
+  function lastConfigUpdate()
+    external
+    view
+    returns (bytes32 queuedConfigUpdateHash, uint64 configUpdateTime, uint64 configUpdateDeadline);
 
-  /// @notice Drip accrued fees to suppliers.
-  function drip() external;
-
-  /// @notice Returns the address of the set's drip model. The drip model governs the interest rate earned by depositors.
-  function dripModel() external view returns (address);
-
-  /// @notice Returns the array of metadata for all tokens minted to `_user`.
-  function getMints(address _user) external view returns (MintMetadata[] memory);
-
-  /// @notice Returns true if `_who` is a valid market in the `_set`, false otherwise.
-  function isMarket(address _who) external view returns (bool);
-
-  /// @notice Returns the drip rate used during the most recent `drip()`.
-  function lastDripRate() external view returns (uint96);
-
-  /// @notice Returns the timestamp of the most recent `drip()`.
-  function lastDripTime() external view returns (uint32);
-
-  /// @notice Returns the exchange rate of shares:assets when the most recent trigger occurred, or 0 if no market is triggered.
-  /// This exchange rate is used for any pending withdrawals that were queued before the trigger occurred to calculate
-  /// the new amount of assets to be received when the withdrawal is completed.
-  function lastTriggeredExchangeRate() external view returns (uint192);
-
-  /// @notice Returns the pending withdrawal count when the most recently triggered market became triggered, or 0 if none.
-  /// Any pending withdrawals with IDs less than this need to have their amount of assets updated to reflect the exchange
-  /// rate at the time when the most recently triggered market became triggered.
-  function lastTriggeredPendingWithdrawalCount() external view returns (uint64);
-
-  /// @notice Returns the leverage factor of the set, as a zoc.
-  function leverageFactor() external view returns (uint256);
-
-  /// @notice Returns the address of the Cozy protocol Manager.
+  /// @notice The Cozy protocol manager contract.
   function manager() external view returns (address);
 
-  /// @notice Returns the encoded market configuration, i.e. it's cost model, weight, and purchase fee for a market.
-  function marketConfig(address) external view returns (bytes32);
+  /// @notice Array of market data for each market in the set.
+  function markets(uint256)
+    external
+    view
+    returns (
+      IPToken ptoken,
+      ITrigger trigger,
+      MarketConfigStorage memory config,
+      MarketState state,
+      uint256 activeProtection,
+      uint256 lastDecayRate,
+      uint256 lastDripRate,
+      uint128 purchasesFeePool,
+      uint128 salesFeePool,
+      uint64 lastDecayTime
+    );
 
-  /// @notice Returns the maximum amount of the underlying asset that can be deposited to supply protection.
-  function maxDeposit(address) external view returns (uint256);
+  /// @notice Maximum amount of the underlying asset that can be deposited to supply protection.
+  function maxDeposit() external view returns (uint256 maxDeposit_);
 
-  /// @notice Maximum amount of shares that can be minted to supply protection.
-  function maxMint(address) external view returns (uint256);
-
-  /// @notice Returns the maximum amount of protection that can be sold for the specified market.
-  function maxProtection(address _trigger) external view returns (uint256);
-
-  /// @notice Maximum amount of protection that can be purchased from the specified market.
-  function maxPurchaseAmount(address _trigger) external view returns (uint256 _protection);
-
-  /// @notice Maximum amount of Set shares that can be redeemed from the `_owner` balance in the Set,
+  /// @notice Maximum amount of set shares that can be redeemed from the `owner_` balance in the Set,
   /// through a redeem call.
-  function maxRedemptionRequest(address _owner) external view returns (uint256);
+  function maxRedemptionRequest(address owner_) external view returns (uint256 redeemableShares_);
 
-  /// @notice Maximum amount of the underlying asset that can be withdrawn from the `_owner` balance in the Set,
-  /// through a withdraw call.
-  function maxWithdrawalRequest(address _owner) external view returns (uint256);
-
-  /// @notice Supply protection by minting exactly `_shares` shares to `_receiver` by depositing `_assets` amount
-  /// of underlying tokens.
-  function mint(uint256 _shares, address _receiver) external returns (uint256 _assets);
-
-  /// @notice Mapping from user address to all of their mints.
-  function mints(address, uint256) external view returns (uint128 amount, uint64 time, uint64 delay);
-
-  /// @notice Returns the amount of decay that will accrue next time `accrueDecay()` is called for the market.
-  function nextDecayAmount(address _trigger) external view returns (uint256 _accruedDecay);
-
-  /// @notice Returns the amount to be dripped on the next `drip()` call.
-  function nextDripAmount() external view returns (uint256);
-
-  /// @notice Returns the number of frozen markets in the set.
-  function numFrozenMarkets() external view returns (uint256);
-
-  /// @notice Returns the number of markets in this Set, including triggered markets.
-  function numMarkets() external view returns (uint256);
-
-  /// @notice Returns the number of triggered markets in the set.
-  function numTriggeredMarkets() external view returns (uint256);
+  /// @notice The owner of the set.
+  function owner() external view returns (address);
 
   /// @notice Pauses the set.
   function pause() external;
 
-  /// @notice Claims protection payout after the market for `_trigger` is triggered. Burns the specified number of
-  /// `ptokens` held by `_owner` and sends the payout to `_receiver`.
-  function payout(
-    address _trigger,
-    uint256 _ptokens,
-    address _receiver,
-    address _owner
-  ) external returns (uint256 _protection);
+  /// @notice The pauser of the set.
+  function pauser() external view returns (address);
 
-  /// @notice Returns the total number of withdrawals that have been queued, including pending withdrawals that have been completed.
-  function pendingWithdrawalCount() external view returns (uint64);
-
-  /// @notice Returns all withdrawal data for the specified withdrawal ID.
-  function pendingWithdrawalData(uint256 _withdrawalId)
-    external
-    view
-    returns (uint256 _remainingWithdrawalDelay, PendingWithdrawal memory _pendingWithdrawal);
-
-  /// @notice Maps a withdrawal ID to information about the pending withdrawal.
-  function pendingWithdrawals(uint256)
-    external
-    view
-    returns (uint128 shares, uint128 assets, address owner, uint64 queueTime, address receiver, uint64 delay);
-
-  /// @notice Allows an on-chain or off-chain user to simulate the effects of their cancellation (i.e. view the refund
-  /// amount, number of PTokens burned, and associated fees collected by the protocol) at the current block, given
-  /// current on-chain conditions.
-  function previewCancellation(
-    address _trigger,
-    uint256 _protection
-  ) external view returns (uint256 _refund, uint256 _ptokens, uint256 _reserveFeeAssets, uint256 _backstopFeeAssets);
-
-  /// @notice Returns the utilization ratio of the specified market after canceling `_assets` of protection.
-  function previewCancellationUtilization(address _trigger, uint256 _assets) external view returns (uint256);
+  /// @notice The pending new owner of the set.
+  function pendingOwner() external view returns (address);
 
   /// @notice Allows an on-chain or off-chain user to simulate the effects of their claim (i.e. view the quantity of
   /// PTokens burned) at the current block, given current on-chain conditions.
-  function previewClaim(address _trigger, uint256 _protection) external view returns (uint256 _ptokens);
-
-  /// @notice Allows an on-chain or off-chain user to simulate the effects of their deposit (i.e. view the number of
-  /// shares received) at the current block, given current on-chain conditions.
-  function previewDeposit(uint256 _assets) external view returns (uint256 _shares);
-
-  /// @notice Allows an on-chain or off-chain user to simulate the effects of their deposit (i.e. view the number of
-  /// shares received along with associated fees) at the current block, given current on-chain conditions.
-  function previewDepositData(uint256 _assets)
-    external
-    view
-    returns (uint256 _userShares, uint256 _reserveFeeAssets, uint256 _backstopFeeAssets, uint256 _setOwnerFeeAssets);
-
-  /// @notice Allows an on-chain or off-chain user to simulate the effects of their mint (i.e. view the number of
-  /// assets transferred) at the current block, given current on-chain conditions.
-  function previewMint(uint256 _shares) external view returns (uint256 _assets);
-
-  /// @notice Allows an on-chain or off-chain user to simulate the effects of their mint (i.e. view the number of
-  /// assets transferred along with associated fees) at the current block, given current on-chain conditions.
-  function previewMintData(uint256 _shares)
-    external
-    view
-    returns (uint256 _assets, uint256 _reserveFeeAssets, uint256 _backstopFeeAssets, uint256 _setOwnerFeeAssets);
-
-  /// @notice Allows an on-chain or off-chain user to simulate the effects of their payout (i.e. view the amount of
-  /// assets that would be received for an amount of PTokens) at the current block, given current on-chain conditions.
-  function previewPayout(address _trigger, uint256 _ptokens) external view returns (uint256 _protection);
-
-  /// @notice Allows an on-chain or off-chain user to simulate the effects of their purchase (i.e. view the total cost,
-  /// inclusive of fees, and the number of PTokens received) at the current block, given current on-chain conditions.
-  function previewPurchase(
-    address _trigger,
-    uint256 _protection
-  ) external view returns (uint256 _totalCost, uint256 _ptokens);
-
-  /// @notice Allows an on-chain or off-chain user to comprehensively simulate the effects of their purchase at the
-  /// current block, given current on-chain conditions. This is similar to `previewPurchase` but additionally returns
-  /// the cost before fees, as well as the fee breakdown.
-  function previewPurchaseData(
-    address _trigger,
-    uint256 _protection
-  )
-    external
-    view
-    returns (
-      uint256 _totalCost,
-      uint256 _ptokens,
-      uint256 _cost,
-      uint256 _reserveFeeAssets,
-      uint256 _backstopFeeAssets,
-      uint256 _setOwnerFeeAssets
-    );
-
-  /// @notice Returns the utilization ratio of the specified market after purchasing `_assets` of protection.
-  function previewPurchaseUtilization(address _trigger, uint256 _assets) external view returns (uint256);
+  function previewClaim(address, uint256) external view returns (uint256);
 
   /// @notice Allows an on-chain or off-chain user to simulate the effects of their redemption (i.e. view the number
   /// of assets received) at the current block, given current on-chain conditions.
-  function previewRedeem(uint256 shares) external view returns (uint256);
+  function previewRedemption(uint64 redemptionId_) external view returns (RedemptionPreview memory redemptionPreview_);
 
   /// @notice Allows an on-chain or off-chain user to simulate the effects of their sale (i.e. view the refund amount,
   /// protection sold, and fees accrued by the protocol) at the current block, given current on-chain conditions.
   function previewSale(
-    address _trigger,
-    uint256 _ptokens
-  ) external view returns (uint256 _refund, uint256 _protection, uint256 _reserveFeeAssets, uint256 _backstopFeeAssets);
+    uint64 marketId_,
+    uint256 ptokens_
+  ) external view returns (uint256 refund_, uint256 protection_, SaleFeesAssets memory saleFeesAssets_);
 
-  /// @notice Allows an on-chain or off-chain user to simulate the effects of their withdrawal (i.e. view the number of
-  /// shares burned) at the current block, given current on-chain conditions.
-  function previewWithdraw(uint256 assets) external view returns (uint256);
-
-  /// @notice Return the PToken address for the given market.
-  function ptoken(address _who) external view returns (address _ptoken);
-
-  /// @notice Returns the address of the Cozy protocol PTokenFactory.
+  /// @notice The Cozy protocol PTokenFactory.
   function ptokenFactory() external view returns (address);
 
   /// @notice Purchase `_protection` amount of protection for the specified market, and send the PTokens to `_receiver`.
   function purchase(
-    address _trigger,
-    uint256 _protection,
-    address _receiver
-  ) external returns (uint256 _totalCost, uint256 _ptokens);
+    uint16 marketId_,
+    uint256 protection_,
+    address receiver_
+  ) external returns (uint256 totalCost_, uint256 ptokens_, PurchaseFeesAssets memory purchaseFeesAssets_);
 
-  /// @notice Returns the market's reserve fee, backstop fee, and set owner fee applied on purchase.
-  function purchaseFees(address _trigger)
+  //// @notice Burns exactly `shares_` from `owner_` and queues `assets_` amount of underlying tokens to be sent to
+  /// `receiver_` after the `IManager.redemptionDelay()` has elapsed.
+  function redeem(
+    uint256 shares_,
+    address receiver_,
+    address owner_
+  ) external returns (uint64 redemptionId_, uint256 assets_);
+
+  /// @notice Retrieve metadata about queued redemptions.
+  function redemptions(uint256 id_)
     external
     view
-    returns (uint256 _reserveFee, uint256 _backstopFee, uint256 _setOwnerFee);
+    returns (
+      uint40 queueTime,
+      uint40 delay,
+      uint176 shares,
+      uint128 assets,
+      address owner,
+      address receiver,
+      uint32 queuedAccISFsLength,
+      uint256 queuedAccISF
+    );
 
-  /// @notice Burns exactly `_shares` from owner and queues `_assets` amount of underlying tokens to be sent to
-  /// `_receiver` after the `manager.withdrawDelay()` has elapsed.
-  function redeem(uint256 _shares, address _receiver, address _owner) external returns (uint256 _assets);
-
-  /// @notice Returns the refund factor when canceling the specified amount of `_protection` in the given market.
-  function refundFactor(address _trigger, uint256 _protection) external view returns (uint256 _refundFactor);
-
-  /// @notice Returns the amount of protection currently available to purchase for the specified market.
-  function remainingProtection(address _trigger) external view returns (uint256);
-
-  /// @notice Sell `_ptokens` amount of ptokens for the specified market, and send the refund amount to `_receiver`.
+  /// @notice Sell `ptokens_` amount of ptokens for the specified market, and send the refund amount to `receiver_`.
   function sell(
-    address _trigger,
-    uint256 _ptokens,
-    address _receiver,
-    address _owner
-  ) external returns (uint256 _refund, uint256 _protection);
+    uint16 marketId_,
+    uint256 ptokens_,
+    address receiver_,
+    address owner_
+  ) external returns (uint128 refund_, uint256 protection_);
 
-  /// @notice Returns the shortfall (i.e. the amount of unbacked active protection) in a market, or zero if the market
-  /// is fully backed.
-  function shortfall(address _trigger) external view returns (uint256);
+  /// @notice Retrieve set-level configuration.
+  function setConfig() external view returns (uint32 leverageFactor, uint16 depositFee);
 
-  /// @notice Returns the state of the market or set. Pass a market address to read that market's state, or the set's
-  /// address to read the set's state.
-  function state(address _who) external view returns (ICState.CState _state);
+  /// @notice The state of the set.
+  function setState() external view returns (SetState);
 
-  /// @notice Returns the set's total amount of fees available to drip to suppliers, and each market's contribution to that total amount.
-  /// When protection is purchased, the supplier fee pools for the set and the market that protection is purchased from
-  /// gets incremented by the protection cost (after fees). They get decremented when fees are dripped to suppliers.
-  function supplierFeePool(address) external view returns (uint256);
+  /// @notice Calculates the total amount of underlying assets that are available to collateralize new protection
+  /// and existing purchases in a Set, minus assets set aside for triggered markets.
+  function totalCollateralAvailable() external view returns (uint256);
 
-  /// @notice Syncs the internal accounting balance with the true balance.
-  function sync() external;
+  /// @notice Starts the ownership transfer of the contract to a new account.
+  function transferOwnership(address newOwner_) external;
 
-  /// @notice Returns the total amount of assets that is available to back protection.
-  function totalAssets() external view returns (uint256 _protectableAssets);
+  /// @notice A mapping of trigger to struct TriggerLookup for fast access to markets given a trigger.
+  function triggerLookups(ITrigger) external view returns (bool marketExists, uint16 marketIdx);
 
-  /// @notice Array of trigger addresses used for markets in the set.
-  function triggers(uint256) external view returns (address);
+  /// @notice Unpause the set.
+  function unpause() external;
 
-  /// @notice Unpauses the set and transitions to the provided `_state`.
-  function unpause(ICState.CState _state) external;
+  /// @notice Signal an update to the set config and market configs. Existing queued updates are overwritten.
+  function updateConfigs(SetConfig memory setConfig_, MarketConfig[] memory marketConfigs_) external;
 
-  /// @notice Execute queued updates to setConfig and marketConfig. This should only be called by the Manager.
-  function updateConfigs(
-    uint256 _leverageFactor,
-    uint256 _depositFee,
-    address _decayModel,
-    address _dripModel,
-    MarketInfo[] memory _marketInfos
-  ) external;
+  /// @notice Called by a trigger when it's state changes to `newMarketState_` to execute the state
+  /// change in the corresponding market.
+  function updateMarketState(MarketState newMarketState_) external;
 
-  /// @notice Updates the state of the a market in the set.
-  function updateMarketState(ICState.MarketState _newState) external;
-
-  /// @notice Updates the set's state to `_state.
-  function updateSetState(ICState.CState _state) external;
-
-  /// @notice Returns the current utilization ratio of the specified market, as a wad.
-  function utilization(address _trigger) external view returns (uint256);
-
-  /// @notice Returns the current utilization ratio of the set, as a wad.
-  function utilization() external view returns (uint256);
-
-  /// @notice Burns `_shares` from owner and queues exactly `_assets` amount of underlying tokens to be sent to
-  /// `_receiver` after the `manager.withdrawDelay()` has elapsed.
-  function withdraw(uint256 _assets, address _receiver, address _owner) external returns (uint256 _shares);
-
-  /// Additional functions from the ABI.
-  function DOMAIN_SEPARATOR() external view returns (bytes32);
-  function VERSION() external view returns (uint256);
-  function allowance(address, address) external view returns (uint256);
-  function approve(address spender, uint256 amount) external returns (bool);
-  function balanceOf(address) external view returns (uint256);
-  function decimals() external view returns (uint8);
-  function name() external view returns (string memory);
-  function nonces(address) external view returns (uint256);
-  function permit(
-    address owner,
-    address spender,
-    uint256 value,
-    uint256 deadline,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) external;
-  function symbol() external view returns (string memory);
-  function totalSupply() external view returns (uint256);
-  function transfer(address _to, uint256 _amount) external returns (bool);
-  function transferFrom(address _from, address _to, uint256 _amount) external returns (bool);
+  // @notice Update the pauser.
+  function updatePauser(address _newPauser) external;
 }

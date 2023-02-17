@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import "chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "./IManager.sol";
+import {AggregatorV3Interface} from "chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import {IManager} from "src/interfaces/IManager.sol";
+import {ISet} from "src/interfaces/ISet.sol";
+import {MarketState} from "src/structs/StateEnums.sol";
 
 /**
  * @notice A trigger contract that takes two addresses: a truth oracle and a tracking oracle.
  * This trigger ensures the two oracles always stay within the given price tolerance; the delta
  * in prices can be equal to but not greater than the price tolerance.
  */
-interface IChainlinkTrigger is ICState {
+interface IChainlinkTrigger {
   /// @dev Emitted when a new set is added to the trigger's list of sets.
   event SetAdded(ISet set);
 
