@@ -15,26 +15,26 @@ import {IUMATrigger} from "src/interfaces/IUMATrigger.sol";
  */
 interface IUMATriggerFactory {
   /// @dev Emitted when the factory deploys a trigger.
-  /// @param trigger The address at which the trigger was deployed.
-  /// @param triggerConfigId See the function of the same name in this contract.
-  /// @param name The name that should be used for markets that use the trigger.
-  /// @param description A human-readable description of the trigger.
-  /// @param logoURI The URI of a logo image to represent the trigger.
+  /// @param trigger_ The address at which the trigger was deployed.
+  /// @param triggerConfigId_ See the function of the same name in this contract.
+  /// @param name_ The name that should be used for markets that use the trigger.
+  /// @param description_ A human-readable description of the trigger.
+  /// @param logoURI_ The URI of a logo image to represent the trigger.
   /// For other attributes, see the docs for the params of `deployTrigger` in
   /// this contract.
   event TriggerDeployed(
-    address trigger,
-    bytes32 indexed triggerConfigId,
-    address indexed umaOracleFinder,
-    string query,
-    address indexed rewardToken,
-    uint256 rewardAmount,
-    address refundRecipient,
-    uint256 bondAmount,
-    uint256 proposalDisputeWindow,
-    string name,
-    string description,
-    string logoURI
+    address trigger_,
+    bytes32 indexed triggerConfigId_,
+    address indexed umaOracleFinder_,
+    string query_,
+    address indexed rewardToken_,
+    uint256 rewardAmount_,
+    address refundRecipient_,
+    uint256 bondAmount_,
+    uint256 proposalDisputeWindow_,
+    string name_,
+    string description_,
+    string logoURI_
   );
 
   /// @notice The manager of the Cozy protocol.
@@ -47,62 +47,62 @@ interface IUMATriggerFactory {
   function triggerCount(bytes32) external view returns (uint256);
 
   /// @notice Call this function to deploy a UMATrigger.
-  /// @param _query The query that the trigger will send to the UMA Optimistic
+  /// @param query_ The query that the trigger will send to the UMA Optimistic
   /// Oracle for evaluation.
-  /// @param _rewardToken The token used to pay the reward to users that propose
+  /// @param rewardToken_ The token used to pay the reward to users that propose
   /// answers to the query.
-  /// @param _rewardAmount The amount of rewardToken that will be paid as a
+  /// @param rewardAmount_ The amount of rewardToken that will be paid as a
   /// reward to anyone who proposes an answer to the query.
-  /// @param _refundRecipient Default address that will recieve any leftover
+  /// @param refundRecipient_ Default address that will recieve any leftover
   /// rewards at UMA query settlement time.
-  /// @param _bondAmount The amount of `rewardToken` that must be staked by a
+  /// @param bondAmount_ The amount of `rewardToken` that must be staked by a
   /// user wanting to propose or dispute an answer to the query. See UMA's price
   /// dispute workflow for more information. It's recommended that the bond
   /// amount be a significant value to deter addresses from proposing malicious,
   /// false, or otherwise self-interested answers to the query.
-  /// @param _proposalDisputeWindow The window of time in seconds within which a
+  /// @param proposalDisputeWindow_ The window of time in seconds within which a
   /// proposed answer may be disputed. See UMA's "customLiveness" setting for
   /// more information. It's recommended that the dispute window be fairly long
   /// (12-24 hours), given the difficulty of assessing expected queries (e.g.
   /// "Was protocol ABCD hacked") and the amount of funds potentially at stake.
-  /// @param _name The name that should be used for markets that use the trigger.
-  /// @param _description A human-readable description of the trigger.
-  /// @param _logoURI The URI of a logo image to represent the trigger.
+  /// @param name_ The name that should be used for markets that use the trigger.
+  /// @param description_ A human-readable description of the trigger.
+  /// @param logoURI_ The URI of a logo image to represent the trigger.
   function deployTrigger(
-    string memory _query,
-    IERC20 _rewardToken,
-    uint256 _rewardAmount,
-    address _refundRecipient,
-    uint256 _bondAmount,
-    uint256 _proposalDisputeWindow,
-    string memory _name,
-    string memory _description,
-    string memory _logoURI
-  ) external returns (IUMATrigger _trigger);
+    string memory query_,
+    IERC20 rewardToken_,
+    uint256 rewardAmount_,
+    address refundRecipient_,
+    uint256 bondAmount_,
+    uint256 proposalDisputeWindow_,
+    string memory name_,
+    string memory description_,
+    string memory logoURI_
+  ) external returns (IUMATrigger trigger_);
 
   /// @notice Call this function to determine the address at which a trigger
   /// with the supplied configuration would be deployed. See `deployTrigger` for
   /// more information on parameters and their meaning.
   function computeTriggerAddress(
-    string memory _query,
-    IERC20 _rewardToken,
-    uint256 _rewardAmount,
-    address _refundRecipient,
-    uint256 _bondAmount,
-    uint256 _proposalDisputeWindow,
-    uint256 _triggerCount
-  ) external view returns (address _address);
+    string memory query_,
+    IERC20 rewardToken_,
+    uint256 rewardAmount_,
+    address refundRecipient_,
+    uint256 bondAmount_,
+    uint256 proposalDisputeWindow_,
+    uint256 triggerCount_
+  ) external view returns (address address_);
 
   /// @notice Call this function to find triggers with the specified
   /// configurations that can be used for new markets in Sets. See
   /// `deployTrigger` for more information on parameters and their meaning.
   function findAvailableTrigger(
-    string memory _query,
-    IERC20 _rewardToken,
-    uint256 _rewardAmount,
-    address _refundRecipient,
-    uint256 _bondAmount,
-    uint256 _proposalDisputeWindow
+    string memory query_,
+    IERC20 rewardToken_,
+    uint256 rewardAmount_,
+    address refundRecipient_,
+    uint256 bondAmount_,
+    uint256 proposalDisputeWindow_
   ) external view returns (address);
 
   /// @notice Call this function to determine the identifier of the supplied
@@ -117,11 +117,11 @@ interface IUMATriggerFactory {
   /// of rewardToken that is being offered, and it would still be reasonable for
   /// Deployer B to not want to re-use A's trigger for his own markets.
   function triggerConfigId(
-    string memory _query,
-    IERC20 _rewardToken,
-    uint256 _rewardAmount,
-    address _refundRecipient,
-    uint256 _bondAmount,
-    uint256 _proposalDisputeWindow
+    string memory query_,
+    IERC20 rewardToken_,
+    uint256 rewardAmount_,
+    address refundRecipient_,
+    uint256 bondAmount_,
+    uint256 proposalDisputeWindow_
   ) external view returns (bytes32);
 }

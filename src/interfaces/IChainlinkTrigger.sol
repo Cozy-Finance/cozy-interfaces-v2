@@ -13,10 +13,10 @@ import {MarketState} from "src/structs/StateEnums.sol";
  */
 interface IChainlinkTrigger {
   /// @dev Emitted when a new set is added to the trigger's list of sets.
-  event SetAdded(ISet set);
+  event SetAdded(ISet set_);
 
   /// @dev Emitted when a trigger's state is updated.
-  event TriggerStateUpdated(MarketState indexed state);
+  event TriggerStateUpdated(MarketState indexed state_);
 
   /// @notice The canonical oracle, assumed to be correct.
   function truthOracle() external view returns (AggregatorV3Interface);
@@ -28,7 +28,7 @@ interface IChainlinkTrigger {
   function state() external returns (MarketState);
 
   /// @notice Called by the Manager to add a newly created set to the trigger's list of sets.
-  function addSet(ISet set) external;
+  function addSet(ISet set_) external;
 
   /// @notice Returns the set address at the specified index in the trigger's list of sets.
   function sets(uint256) external view returns (address);
@@ -63,7 +63,8 @@ interface IChainlinkTrigger {
   /// required state changes both in the trigger and the sets.
   function runProgrammaticCheck() external returns (MarketState);
 
-  /// @notice Returns true if the trigger has been acknowledged by the entity responsible for transitioning trigger state.
+  /// @notice Returns true if the trigger has been acknowledged by the entity responsible for transitioning trigger
+  /// state.
   /// @notice Chainlink triggers are programmatic, so this always returns true.
   function acknowledged() external pure returns (bool);
 }

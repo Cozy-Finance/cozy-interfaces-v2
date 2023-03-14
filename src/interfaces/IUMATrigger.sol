@@ -53,16 +53,16 @@ import {MarketState} from "src/structs/StateEnums.sol";
  */
 interface IUMATrigger {
   /// @dev Emitted when a new set is added to the trigger's list of sets.
-  event SetAdded(ISet set);
+  event SetAdded(ISet set_);
 
   /// @dev Emitted when a trigger's state is updated.
-  event TriggerStateUpdated(MarketState indexed state);
+  event TriggerStateUpdated(MarketState indexed state_);
 
   /// @notice The current trigger state. This should never return PAUSED.
   function state() external returns (MarketState);
 
   /// @notice Called by the Manager to add a newly created set to the trigger's list of sets.
-  function addSet(ISet set) external;
+  function addSet(ISet set_) external;
 
   /// @notice The type of query that will be submitted to the oracle.
   function queryIdentifier() external view returns (bytes32);
@@ -101,6 +101,14 @@ interface IUMATrigger {
   /// next time `runProgrammaticCheck` is called.
   function shouldTrigger() external view returns (bool);
 
+  /// @notice UMA callback for disputes. This code is run when the answer
+  /// proposed to the query is disputed.
+  /// @param identifier_ price identifier being requested.
+  /// @param timestamp_ timestamp of the original query request.
+  /// @param ancillaryData_ ancillary data of the original query request.
+  function priceDisputed(bytes32 identifier_, uint256 timestamp_, bytes memory ancillaryData_, uint256 /* refund_ */ )
+    external;
+
   /// @notice UMA callback for proposals. This function is called by the UMA
   /// oracle when a new answer is proposed for the query. Its only purpose is to
   /// prevent people from proposing negative answers and prematurely closing our
@@ -110,20 +118,20 @@ interface IUMATrigger {
   /// hacks *actually happen*. So we revert when people try to submit negative
   /// answers, as negative answers that are undisputed would resolve our query
   /// and we'd have to pay a new reward to resubmit.
-  /// @param _identifier price identifier being requested.
-  /// @param _timestamp timestamp of the original query request.
-  /// @param _ancillaryData ancillary data of the original query request.
-  function priceProposed(bytes32 _identifier, uint256 _timestamp, bytes memory _ancillaryData) external;
+  /// @param identifier_ price identifier being requested.
+  /// @param timestamp_ timestamp of the original query request.
+  /// @param ancillaryData_ ancillary data of the original query request.
+  function priceProposed(bytes32 identifier_, uint256 timestamp_, bytes memory ancillaryData_) external;
 
   /// @notice UMA callback for settlement. This code is run when the protocol
   /// has confirmed an answer to the query.
   /// @dev This callback is kept intentionally lean, as we don't want to risk
   /// reverting and blocking settlement.
-  /// @param _identifier price identifier being requested.
-  /// @param _timestamp timestamp of the original query request.
-  /// @param _ancillaryData ancillary data of the original query request.
-  /// @param _answer the oracle's answer to the query.
-  function priceSettled(bytes32 _identifier, uint256 _timestamp, bytes memory _ancillaryData, int256 _answer) external;
+  /// @param identifier_ price identifier being requested.
+  /// @param timestamp_ timestamp of the original query request.
+  /// @param ancillaryData_ ancillary data of the original query request.
+  /// @param answer_ the oracle's answer to the query.
+  function priceSettled(bytes32 identifier_, uint256 timestamp_, bytes memory ancillaryData_, int256 answer_) external;
 
   /// @notice Toggles the trigger if the UMA oracle has confirmed a positive
   /// answer to the query.
@@ -147,7 +155,8 @@ interface IUMATrigger {
   /// @notice The maximum amount of sets that can be added to this trigger.
   function MAX_SET_LENGTH() external view returns (uint256);
 
-  /// @notice Returns true if the trigger has been acknowledged by the entity responsible for transitioning trigger state.
+  /// @notice Returns true if the trigger has been acknowledged by the entity responsible for transitioning trigger
+  /// state.
   /// @notice UMA triggers are managed by the UMA decentralized voting system, so this always returns true.
   function acknowledged() external pure returns (bool);
 }

@@ -8,17 +8,17 @@ interface ICostModel {
   /// @notice Returns the cost of purchasing protection as a percentage of the amount being purchased, as a wad.
   /// For example, if you are purchasing $200 of protection and this method returns 1e17, then the cost of
   /// the purchase is 200 * 1e17 / 1e18 = $20.
-  /// @param utilization Current utilization of the market.
-  /// @param newUtilization Utilization ratio of the market after purchasing protection.
-  function costFactor(uint256 utilization, uint256 newUtilization) external view returns (uint256);
+  /// @param utilization_ Current utilization of the market.
+  /// @param newUtilization_ Utilization ratio of the market after purchasing protection.
+  function costFactor(uint256 utilization_, uint256 newUtilization_) external view returns (uint256);
 
   /// @notice Gives the return value in assets of returning protection, as a percentage of
   /// the supplier fee pool, as a wad. For example, if the supplier fee pool currently has $100
   /// and this method returns 1e17, then you will get $100 * 1e17 / 1e18 = $10 in assets back.
-  /// @param utilization Current utilization of the market.
-  /// @param newUtilization Utilization ratio of the market after cancelling protection.
-  function refundFactor(uint256 utilization, uint256 newUtilization) external view returns (uint256);
+  /// @param utilization_ Current utilization of the market.
+  /// @param newUtilization_ Utilization ratio of the market after cancelling protection.
+  function refundFactor(uint256 utilization_, uint256 newUtilization_) external view returns (uint256);
 
   /// @notice Updates the cost model's storage variables.
-  function update(uint256 utilization, uint256 newUtilization) external;
+  function update(uint256 utilization_, uint256 newUtilization_) external;
 }
