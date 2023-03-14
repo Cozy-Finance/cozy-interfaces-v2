@@ -10,7 +10,7 @@ import {ITrigger} from "src/interfaces/ITrigger.sol";
  */
 interface IBaseTrigger is ITrigger {
   /// @notice Returns the set address at the specified index in the trigger's list of sets.
-  function sets(uint256 index) external returns (ISet set);
+  function sets(uint256 index_) external returns (ISet set);
 
   /// @notice Returns all sets in the trigger's list of sets.
   function getSets() external returns (ISet[] memory);

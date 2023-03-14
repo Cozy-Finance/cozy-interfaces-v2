@@ -29,7 +29,8 @@ struct ConfigUpdateMetadata {
   // This strategy is used instead of storing non-hashed `SetConfig` and `MarketConfig[]` for gas optimization
   // and to avoid dynamic array manipulation. This hash is set to bytes32(0) when there is no config update queued.
   bytes32 queuedConfigUpdateHash;
-  // Earliest timestamp at which ISet.finalizeUpdateConfigs can be called to apply config updates queued by updateConfigs.
+  // Earliest timestamp at which ISet.finalizeUpdateConfigs can be called to apply config updates queued by
+  // updateConfigs.
   uint64 configUpdateTime;
   // The latest timestamp after configUpdateTime at which ISet.finalizeUpdateConfigs can be called to apply config
   // updates queued by ISet.updateConfigs. After this timestamp, the queued config updates expire and can no longer be
