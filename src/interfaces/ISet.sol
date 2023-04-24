@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import {MarketConfig, SetConfig} from "src/structs/Configs.sol";
 import {MarketState, SetState} from "src/structs/StateEnums.sol";
 
 interface ISet {
@@ -21,10 +22,14 @@ interface ISet {
   event ConfigUpdatesQueued(
     SetConfig setConfig_, MarketConfig[] marketConfigs_, uint256 updateTime_, uint256 updateDeadline_
   );
+  /// @dev Emitted when decay is accrued.
+  event DecayAccrued(address indexed ptoken_, uint256 newActiveProtection_);
   /// @dev Emitted when a user deposits assets or mints shares. This is a set-level event.
   event Deposit(address indexed caller_, address indexed owner_, uint256 assets_, uint256 shares_);
   /// @dev Emitted when fees are accrued.
   event FeesAccrued(uint128 reserveFees_, uint128 backstopFees_, uint128 setOwnerFees_);
+  /// @dev Emitted when fees are dripped to suppliers.
+  event FeesDripped(uint128 newTotalPurchasesFees_, uint128 newTotalSalesFees_);
   /// @notice Emitted when a market is created.
   event MarketCreated(uint16 indexed marketId_, address ptokenAddress_);
   /// @notice Emitted when a Market changes state.
@@ -83,15 +88,6 @@ interface ISet {
     uint128 setOwnerFeeAssets;
   }
 
-  struct MarketConfig {
-    address trigger;
-    address costModel;
-    address dripDecayModel;
-    uint16 weight;
-    uint16 purchaseFee;
-    uint16 saleFee;
-  }
-
   struct MarketConfigStorage {
     address costModel;
     address dripDecayModel;
@@ -127,11 +123,6 @@ interface ISet {
     uint128 supplierFeeAssets;
   }
 
-  struct SetConfig {
-    uint32 leverageFactor;
-    uint16 depositFee;
-  }
-
   function acceptOwnership() external;
   function accounting()
     external
@@ -154,9 +145,7 @@ interface ISet {
   function claim(uint16 marketId_, uint256 ptokens_, address receiver_, address owner_)
     external
     returns (uint128 protection_);
-  function claimCozyFees(address owner_, address backstop_)
-    external
-    returns (uint128 reserveAmount_, uint128 backstopAmount_);
+  function claimCozyFees(address owner_) external returns (uint128 reserveAmount_, uint128 backstopAmount_);
   function claimSetFees(address caller_, address receiver_) external returns (uint128 setOwnerFees_);
   function completeRedeem(uint64 redemptionId_) external returns (uint256 assetsRedeemed_);
   function convertToAssets(uint256 shares_) external view returns (uint256);
@@ -172,6 +161,10 @@ interface ISet {
   function effectiveActiveProtection(uint16 marketId_) external view returns (uint256);
   function finalizeUpdateConfigs(SetConfig memory setConfig_, MarketConfig[] memory marketConfigs_) external;
   function getMints(address user_) external view returns (MintData[] memory);
+  function isValidUpdate(SetConfig memory setConfig_, MarketConfig[] memory marketConfigs_)
+    external
+    view
+    returns (bool);
   function lastConfigUpdate()
     external
     view
@@ -240,7 +233,7 @@ interface ISet {
   function sell(uint16 marketId_, uint256 ptokens_, address receiver_, address owner_)
     external
     returns (uint128 refund_, uint256 protection_);
-  function setConfig() external view returns (uint32 leverageFactor, uint16 depositFee);
+  function setConfig() external view returns (uint32 leverageFactor, uint16 depositFee, bool rebalanceWeightsOnTrigger);
   function setState() external view returns (SetState);
   function symbol() external view returns (string memory);
   function totalCollateralAvailable() external view returns (uint256);
