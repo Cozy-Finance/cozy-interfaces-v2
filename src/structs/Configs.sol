@@ -9,6 +9,7 @@ import {ITrigger} from "src/interfaces/ITrigger.sol";
 struct SetConfig {
   uint32 leverageFactor; // The set's leverage factor.
   uint16 depositFee; // Fee applied on each deposit and mint.
+  bool rebalanceWeightsOnTrigger; // True if weights should be automatically rebalanced when a market triggers.
 }
 
 /// @notice Market-level configuration.

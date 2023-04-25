@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
+import {MarketConfig, SetConfig} from "src/structs/Configs.sol";
+
 /**
  * @notice The Manager is in charge of protocol-level configuration and exposes the `createSet` method used to create
  * new sets.
@@ -46,23 +48,9 @@ interface IManager {
     uint16 saleFeeBackstop;
   }
 
-  struct MarketConfig {
-    address trigger;
-    address costModel;
-    address dripDecayModel;
-    uint16 weight;
-    uint16 purchaseFee;
-    uint16 saleFee;
-  }
-
   struct ProtocolFees {
     uint16 reserveFee;
     uint16 backstopFee;
-  }
-
-  struct SetConfig {
-    uint32 leverageFactor;
-    uint16 depositFee;
   }
 
   function MAX_FEE() external view returns (uint256);

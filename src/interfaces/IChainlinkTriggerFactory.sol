@@ -26,6 +26,7 @@ interface IChainlinkTriggerFactory {
   /// oracle. See
   /// `ChainlinkTrigger.trackingFrequencyTolerance()` for more information.
   /// @param name_ The name that should be used for markets that use the trigger.
+  /// @param category_ The category of the trigger.
   /// @param description_ A human-readable description of the trigger.
   /// @param logoURI_ The URI of a logo image to represent the trigger.
   /// For other attributes, see the docs for the params of `deployTrigger` in
@@ -39,6 +40,7 @@ interface IChainlinkTriggerFactory {
     uint256 truthFrequencyTolerance_,
     uint256 trackingFrequencyTolerance_,
     string name_,
+    string category_,
     string description_,
     string logoURI_
   );
@@ -58,6 +60,7 @@ interface IChainlinkTriggerFactory {
   /// have for the truth oracle. See ChainlinkTrigger.truthFrequencyTolerance() for more information.
   /// @param trackingFrequencyTolerance_ The frequency tolerance that the deployed trigger will
   /// have for the tracking oracle. See ChainlinkTrigger.trackingFrequencyTolerance() for more information.
+  /// @param metadata_ See TriggerMetadata for more info.
   function deployTrigger(
     AggregatorV3Interface truthOracle_,
     AggregatorV3Interface trackingOracle_,
